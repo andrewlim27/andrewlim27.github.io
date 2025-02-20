@@ -147,7 +147,31 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Hello</p>
+<p>This dataset comes from Carbon Majors, who have compiled a database of emissions data dating back to 1854. The dataset provides insights on the direct operational emissions of 122 of the world’s largest oil, gas, coal, and cement producers, with data such as entity type, commodity, production level, and total emissions attributed to that entity. I accessed it via the TidyTuesday repo from May 21, 2024.</p>
+<p>The dataset can be found here: <a href="https://carbonmajors.org/Downloads" class="uri">https://carbonmajors.org/Downloads</a></p>
+<p>The TidyTuesday repo can be found here: <a href="https://github.com/rfordatascience/tidytuesday/tree/main/data/2024/2024-05-21" class="uri">https://github.com/rfordatascience/tidytuesday/tree/main/data/2024/2024-05-21</a></p>
+<p>The following visualization shows the stark increase in the production of nearly every type of resource included in the dataset in recent years, except for thermal coal and natural gas. In addition, there is a clear major rise in oil, gas, coal, and cement production after around 1950, with production of most types increasing sharply until a little after 2000, at which point growth in production continues but at a lower rate.</p>
+<div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+✔ lubridate 1.9.4     ✔ tidyr     1.3.1
+✔ purrr     1.0.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="emissions_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 
 
 

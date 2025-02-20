@@ -2,8 +2,23 @@
 title: "Emissions"
 ---
 
-Hello
+This dataset comes from Carbon Majors, who have compiled a database of emissions data dating back to 1854. The dataset provides insights on the direct operational emissions of 122 of the world's largest oil, gas, coal, and cement producers, with data such as entity type, commodity, production level, and total emissions attributed to that entity. I accessed it via the TidyTuesday repo from May 21, 2024.
+
+The dataset can be found here: <https://carbonmajors.org/Downloads>
+
+The TidyTuesday repo can be found here: <https://github.com/rfordatascience/tidytuesday/tree/main/data/2024/2024-05-21>
+
+The following visualization shows the stark increase in the production of nearly every type of resource included in the dataset in recent years, except for thermal coal and natural gas. In addition, there is a clear major rise in oil, gas, coal, and cement production after around 1950, with production of most types increasing sharply until a little after 2000, at which point growth in production continues but at a lower rate.
 
 ```{r}
-
+#| echo: false
+library(tidyverse)
+emissions <- read.csv("emissions.csv")
+emissions <- mutate(emissions, production_value)
+ggplot(emissions) +
+  geom_line(aes(x= year, y = production_value)) +
+  facet_wrap(~ commodity, scales = "free_y") +
+  labs(
+    x = "Year",
+    y = "Production Level")
 ```
