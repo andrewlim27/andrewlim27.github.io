@@ -1,6 +1,5 @@
 ---
 title: "andrewlim27.github.io"
-output-dir: docs
 ---
 
 This is a Quarto website.
