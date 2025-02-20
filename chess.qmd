@@ -2,8 +2,21 @@
 title: "Chess"
 ---
 
-This data
+This dataset comes from Lichess.org via Mitchell J on Kaggle, representing over 20,000 games of chess collected from users on Lichess.org. Data includes players' ratings, openings played, and outcome of the game (among other data). I accessed it via the TidyTuesday repo from October 1, 2024.
+
+The dataset can be found here: <https://www.kaggle.com/datasets/datasnaek/chess/data>
+
+The TidyTuesday repo can be found here: <https://github.com/rfordatascience/tidytuesday/tree/main/data/2024/2024-10-01>
+
+The following visualization shows the relationship between the number of turns a chess game takes and the difference between the two players' ratings. A positive rating difference indicates that the player playing white had a higher rating than their opponent, and a negative rating difference indicates that the player playing black had a higher rating for that game. The visualization suggests that when there is a large difference between players' ratings, fewer games with over 100 turns are played when compared to games where players' have a small difference in ratings.
 
 ```{r}
-
+#| echo: false
+library(tidyverse)
+chess <- read.csv("chess.csv")
+ggplot(chess, aes(x= (diff = white_rating-black_rating), y = turns)) +
+  geom_point() +
+  labs(
+    x = "Rating Difference",
+    y = "Turns")
 ```
