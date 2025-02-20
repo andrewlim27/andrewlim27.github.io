@@ -3,18 +3,27 @@ project:
   output-dir: docs
 
 website:
-  title: "andrewlim27.github.io"
+  title: "Andrew Lim"
   navbar:
+    right: 
+      - text: "About"
+        href: about.html
+      - text: "Data Viz"
+        menu: 
+         - text: "Chess"
+           href: chess.html
+         - text: "Carbon Emissions"
+           href: emissions.html
     left:
       - href: index.qmd
         text: Home
-      - about.qmd
 
 format:
   html:
-    theme: cosmo
+    theme: litera
     css: styles.css
     toc: true
+    page-layout: full
 
 editor: visual
 

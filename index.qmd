@@ -1,11 +1,16 @@
 ---
-title: "andrewlim27.github.io"
+title: "Andrew Lim"
+image: profile.jpg
+about:
+  template: jolla
+  links:
+    - text: Website Repository
+      href: https://github.com/andrewlim27/andrewlim27.github.io
+    - icon: github
+      text: Github
+      href: https://github.com/andrewlim27
+    - text: Email
+      href: mailto:aslr2024@mymail.pomona.edu
 ---
 
-This is a Quarto website.
-
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
-
-```{r}
-1 + 1
-```
+Hello! I'm Andrew, a first-year at Pomona College. I study mathematics and computer science, and I love their applications such as data science. Outside of the classroom, I golf for the Pomona-Pitzer Men's Golf team. My hobbies include sudoku and anything outdoors (I especially love the mountains).

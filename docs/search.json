@@ -2,15 +2,29 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "andrewlim27.github.io",
+    "title": "Andrew Lim",
     "section": "",
-    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites.\n\n1 + 1\n\n[1] 2"
+    "text": "Hello! I’m Andrew, a first-year at Pomona College. I study mathematics and computer science, and I love their applications such as data science. Outside of the classroom, I golf for the Pomona-Pitzer Men’s Golf team. My hobbies include sudoku and anything outdoors (I especially love the mountains)."
+  },
+  {
+    "objectID": "chess.html",
+    "href": "chess.html",
+    "title": "Chess",
+    "section": "",
+    "text": "This data"
   },
   {
     "objectID": "about.html",
     "href": "about.html",
     "title": "About",
     "section": "",
-    "text": "About this site\n\n1 + 1\n\n[1] 2"
+    "text": "This website was created on February 19, 2025."
+  },
+  {
+    "objectID": "emissions.html",
+    "href": "emissions.html",
+    "title": "Emissions",
+    "section": "",
+    "text": "Hello"
   }
 ]
