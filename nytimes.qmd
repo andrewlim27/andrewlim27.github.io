@@ -4,11 +4,12 @@ title: "NYTimes Analysis"
 
 Dataset: [NYTimes Article Headlines](https://rdrr.io/cran/RTextTools/man/NYTimes.html)
 
-The following analysis uses the NYTimes dataset from the RTextTools package. The dataset contains article IDs, publication dates, article headlines, article subjects, and topic codes for articles from the New York Times from 1996 to 2006. The dataset was compiled by Professor Amber E. Boydstun at the University of California, Davis.
+This analysis uses the NYTimes dataset from the RTextTools package. The dataset contains article IDs, publication dates, article headlines, article subjects, and topic codes for articles from the New York Times from 1996 to 2006. The dataset was compiled by Professor Amber E. Boydstun at the University of California, Davis.
 
 The following graph shows the number of articles published each month from 1996-2006. Upon first inspection, February has the least number of articles published, and January, March, May, and December seem to have the most number of articles published. If we stop to consider why this might be, we quickly notice that February has the fewest days and January, March, May, and December all have 31 days. We inspect this further in the following graph.
 
-```{r}
+```{r message=FALSE}
+library(tidyverse)
 library(RTextTools)
 data(NYTimes)
 as_tibble(NYTimes)
@@ -22,8 +23,10 @@ ggplot(grouped_month, aes(x = onlyMonth)) +
 
 ```
 
+The graph below more clearly shows that more articles are published during months with more days. Although we can't prove why this is, the New York Times is published every day, meaning that months with more days likely have a higher quantity of articles simply because they have more editions published.
+
 ```{r}
-#Groups the months based on the number of days in each month.
+#Groups the months based on the number of days in each month, and then computes the average number of articles published in each month in the period from 1996-2006.
 new_grouped_month <- grouped_month |> mutate(numDays = ifelse(str_detect(onlyMonth, "Feb"), "28/29", ifelse(str_detect(onlyMonth, "Jan|Mar|May|Jul|Aug|Oct|Dec"), "31", "30"))) |> group_by(numDays) |> summarize(count = n()) |> mutate(average = ifelse(numDays == "31", count/7, ifelse(numDays == "30", count/4, count)))
 
 ggplot(new_grouped_month, aes(x = numDays, y = average)) +

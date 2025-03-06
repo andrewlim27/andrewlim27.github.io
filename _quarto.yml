@@ -16,6 +16,10 @@ website:
            href: chess.html
          - text: "Carbon Emissions"
            href: emissions.html
+      - text: "Text Analysis"
+        menu:
+         - text: "New York Times Headlines" 
+         - href: nytimes.html
 
 format:
   html:
