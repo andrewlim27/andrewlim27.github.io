@@ -1,5 +1,6 @@
 ---
 title: "NYTimes Analysis"
+code-fold: true
 ---
 
 Dataset: [NYTimes Article Headlines](https://rdrr.io/cran/RTextTools/man/NYTimes.html)
@@ -12,7 +13,7 @@ The following graph shows the number of articles published each month from 1996-
 library(tidyverse)
 library(RTextTools)
 data(NYTimes)
-as_tibble(NYTimes)
+head(as_tibble(NYTimes), 4)
 
 #Adding a column onlyMonth that has extracts the "Jan" or similar from the date column using regular expressions. Converting this column into factors allows us to order the months chronologically. I grouped by this column and then plotted the number of articles published each month to get the following graph:
 grouped_month <- NYTimes |> mutate(onlyMonth = factor(str_extract(Date, "(?<=-)[a-z|A-Z]+"), levels = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"))) |> group_by(onlyMonth)
@@ -34,6 +35,18 @@ ggplot(new_grouped_month, aes(x = numDays, y = average)) +
   labs(x="Number of Days in Month", y = "", subtitle = "Average Number of Articles Published", title = "Number of Articles Published Monthly Based on the Length of the Month")
 ```
 
+The table below shows the most frequent lowercase words found in article headlines. Most of the words are very short in length, indicating that the New York Times prefers to keep words above 2-3 characters long capitalized. Notably, however, the words "special" and "report" both appear lowercased 34 times. Upon further inspection, I found that the New York Times ran an article series called "A special report", reporting on important world-scale events. This series accounts for the otherwise strange appearance of these long lowercased words.
+
 ```{r}
-election_headlines <- NYTimes |> filter(str_detect(Title, "Iraq")) |> print()
+lowercase <- NYTimes |> mutate(lowercase_words = str_extract_all(Title, "([^'-.\\&]\\b)[a-z][a-z|']*\\b")) |> unnest(lowercase_words) |> select(lowercase_words) |> mutate(lowercase_words = str_replace(lowercase_words, " ", "")) |> group_by(lowercase_words) |> summarize(count = n()) |> arrange(desc(count)) |> head(n=20) |> print()
+
+```
+
+The graph below shows the number of election-related articles published in each month in the period 1996-2006. The graph shows spikes in election-related articles in the months January, May, July, September, October, and November. This spike in articles from September through November matches my expectations for the data, since elections in the US occur in November, and September and October are heavy campaigning months. I was surprised to see the spikes in January and May, which I hypothesize are attributable to inaugurations and primaries, respectively. Although there are relatively few election related articles represented here, it is clear that their publication usually occurs around the time of significant political/electoral events.
+
+```{r}
+election_articles <- grouped_month |> mutate(election = str_detect(Title, "elect|vote|voting") | str_detect(Subject, "elect|vote|voting")) |> group_by(onlyMonth) |> filter(election == TRUE)# |> summarize(count = n())
+ggplot(election_articles, aes(x=onlyMonth)) +
+  geom_bar() +
+  labs(x="Month", y = "", title = "Number of Election-Related Articles by Month from 1996-2006", subtitle = "Number of Articles")
 ```

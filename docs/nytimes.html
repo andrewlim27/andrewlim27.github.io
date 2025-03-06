@@ -146,10 +146,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">Text Analysis</span>
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-text-analysis">    
-        <li class="dropdown-header">New York Times Headlines</li>
         <li>
     <a class="dropdown-item" href="./nytimes.html">
- <span class="dropdown-text"></span></a>
+ <span class="dropdown-text">New York Times Headlines</span></a>
   </li>  
     </ul>
   </li>
@@ -193,32 +192,31 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>This analysis uses the NYTimes dataset from the RTextTools package. The dataset contains article IDs, publication dates, article headlines, article subjects, and topic codes for articles from the New York Times from 1996 to 2006. The dataset was compiled by Professor Amber E. Boydstun at the University of California, Davis.</p>
 <p>The following graph shows the number of articles published each month from 1996-2006. Upon first inspection, February has the least number of articles published, and January, March, May, and December seem to have the most number of articles published. If we stop to consider why this might be, we quickly notice that February has the fewest days and January, March, May, and December all have 31 days. We inspect this further in the following graph.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RTextTools)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(NYTimes)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">as_tibble</span>(NYTimes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">as_tibble</span>(NYTimes), <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 3,104 × 5
-   Article_ID Date      Title                                 Subject Topic.Code
-        &lt;int&gt; &lt;fct&gt;     &lt;fct&gt;                                 &lt;fct&gt;        &lt;int&gt;
- 1      41246 1-Jan-96  Nation's Smaller Jails Struggle To C… Jails …         12
- 2      41257 2-Jan-96  FEDERAL IMPASSE SADDLING STATES WITH… Federa…         20
- 3      41268 3-Jan-96  Long, Costly Prelude Does Little To … Conten…         20
- 4      41279 4-Jan-96  Top Leader of the Bosnian Serbs Now … Bosnia…         19
- 5      41290 5-Jan-96  BATTLE OVER THE BUDGET: THE OVERVIEW… Battle…          1
- 6      41302 7-Jan-96  South African Democracy Stumbles on … politi…         19
- 7      41314 8-Jan-96  Among Economists, Little Fear on Def… econom…          1
- 8      41333 10-Jan-96 BATTLE OVER THE BUDGET: THE OVERVIEW… budget…          1
- 9      41344 11-Jan-96 High Court Is Cool To Census Change   census…         20
-10      41355 12-Jan-96 TURMOIL AT BARNEYS: THE DIFFICULTIES… barney…         15
-# ℹ 3,094 more rows</code></pre>
+<pre><code># A tibble: 4 × 5
+  Article_ID Date     Title                                   Subject Topic.Code
+       &lt;int&gt; &lt;fct&gt;    &lt;fct&gt;                                   &lt;fct&gt;        &lt;int&gt;
+1      41246 1-Jan-96 Nation's Smaller Jails Struggle To Cop… Jails …         12
+2      41257 2-Jan-96 FEDERAL IMPASSE SADDLING STATES WITH I… Federa…         20
+3      41268 3-Jan-96 Long, Costly Prelude Does Little To Al… Conten…         20
+4      41279 4-Jan-96 Top Leader of the Bosnian Serbs Now Un… Bosnia…         19</code></pre>
 </div>
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Adding a column onlyMonth that has extracts the "Jan" or similar from the date column using regular expressions. Converting this column into factors allows us to order the months chronologically. I grouped by this column and then plotted the number of articles published each month to get the following graph:</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>grouped_month <span class="ot">&lt;-</span> NYTimes <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">onlyMonth =</span> <span class="fu">factor</span>(<span class="fu">str_extract</span>(Date, <span class="st">"(?&lt;=-)[a-z|A-Z]+"</span>), <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Jan"</span>, <span class="st">"Feb"</span>, <span class="st">"Mar"</span>, <span class="st">"Apr"</span>, <span class="st">"May"</span>, <span class="st">"Jun"</span>, <span class="st">"Jul"</span>, <span class="st">"Aug"</span>, <span class="st">"Sep"</span>, <span class="st">"Oct"</span>, <span class="st">"Nov"</span>, <span class="st">"Dec"</span>))) <span class="sc">|&gt;</span> <span class="fu">group_by</span>(onlyMonth)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#NYTimes &lt;- fct_relevel(onlyMonth, levels = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"))</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(grouped_month, <span class="fu">aes</span>(<span class="at">x =</span> onlyMonth)) <span class="sc">+</span></span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Month"</span>, <span class="at">y =</span> <span class="st">""</span>, <span class="at">subtitle =</span> <span class="st">"Number of Articles Published"</span>, <span class="at">title =</span> <span class="st">"Number of Articles Published Each Month from 1996-2006"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -229,12 +227,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>The graph below more clearly shows that more articles are published during months with more days. Although we can’t prove why this is, the New York Times is published every day, meaning that months with more days likely have a higher quantity of articles simply because they have more editions published.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Groups the months based on the number of days in each month, and then computes the average number of articles published in each month in the period from 1996-2006.</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>new_grouped_month <span class="ot">&lt;-</span> grouped_month <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">numDays =</span> <span class="fu">ifelse</span>(<span class="fu">str_detect</span>(onlyMonth, <span class="st">"Feb"</span>), <span class="st">"28/29"</span>, <span class="fu">ifelse</span>(<span class="fu">str_detect</span>(onlyMonth, <span class="st">"Jan|Mar|May|Jul|Aug|Oct|Dec"</span>), <span class="st">"31"</span>, <span class="st">"30"</span>))) <span class="sc">|&gt;</span> <span class="fu">group_by</span>(numDays) <span class="sc">|&gt;</span> <span class="fu">summarize</span>(<span class="at">count =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">average =</span> <span class="fu">ifelse</span>(numDays <span class="sc">==</span> <span class="st">"31"</span>, count<span class="sc">/</span><span class="dv">7</span>, <span class="fu">ifelse</span>(numDays <span class="sc">==</span> <span class="st">"30"</span>, count<span class="sc">/</span><span class="dv">4</span>, count)))</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(new_grouped_month, <span class="fu">aes</span>(<span class="at">x =</span> numDays, <span class="at">y =</span> average)) <span class="sc">+</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Number of Days in Month"</span>, <span class="at">y =</span> <span class="st">""</span>, <span class="at">subtitle =</span> <span class="st">"Average Number of Articles Published"</span>, <span class="at">title =</span> <span class="st">"Number of Articles Published Monthly Based on the Length of the Month"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -243,361 +244,53 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+<p>The table below shows the most frequent lowercase words found in article headlines. Most of the words are very short in length, indicating that the New York Times prefers to keep words above 2-3 characters long capitalized. Notably, however, the words “special” and “report” both appear lowercased 34 times. Upon further inspection, I found that the New York Times ran an article series called “A special report”, reporting on important world-scale events. This series accounts for the otherwise strange appearance of these long lowercased words.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>election_headlines <span class="ot">&lt;-</span> NYTimes <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="fu">str_detect</span>(Title, <span class="st">"Iraq"</span>)) <span class="sc">|&gt;</span> <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>lowercase <span class="ot">&lt;-</span> NYTimes <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">lowercase_words =</span> <span class="fu">str_extract_all</span>(Title, <span class="st">"([^'-.</span><span class="sc">\\</span><span class="st">&amp;]</span><span class="sc">\\</span><span class="st">b)[a-z][a-z|']*</span><span class="sc">\\</span><span class="st">b"</span>)) <span class="sc">|&gt;</span> <span class="fu">unnest</span>(lowercase_words) <span class="sc">|&gt;</span> <span class="fu">select</span>(lowercase_words) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">lowercase_words =</span> <span class="fu">str_replace</span>(lowercase_words, <span class="st">" "</span>, <span class="st">""</span>)) <span class="sc">|&gt;</span> <span class="fu">group_by</span>(lowercase_words) <span class="sc">|&gt;</span> <span class="fu">summarize</span>(<span class="at">count =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(count)) <span class="sc">|&gt;</span> <span class="fu">head</span>(<span class="at">n=</span><span class="dv">20</span>) <span class="sc">|&gt;</span> <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
-<pre><code>   Article_ID      Date
-1       40108 10-May-97
-2       44917  4-Nov-97
-3       31857 28-Apr-98
-4       33691  8-Jan-99
-5       33721 12-Jan-99
-6       18984 30-Mar-01
-7       24216  3-Sep-02
-8        6110 22-Sep-02
-9        6136 10-Oct-02
-10      16977 13-Oct-02
-11       6151 23-Oct-02
-12      20550 23-Jan-03
-13      17689 23-Feb-03
-14       6295 21-Mar-03
-15       6300 22-Mar-03
-16       7866  1-Apr-03
-17       6826  5-Apr-03
-18       8147 14-Apr-03
-19       7520 18-Apr-03
-20       7522 20-Apr-03
-21       7885  1-May-03
-22       7530  3-May-03
-23       7890 11-May-03
-24       6373 11-Jun-03
-25       6840 18-Jun-03
-26       7545 21-Jul-03
-27       6396 10-Aug-03
-28       6402 22-Aug-03
-29      24819  5-Sep-03
-30       7563 30-Sep-03
-31      17692  1-Oct-03
-32       6421 23-Oct-03
-33       6436  1-Dec-03
-34       6444 17-Dec-03
-35       7573  5-Jan-04
-36       8163 29-Jan-04
-37       8061  7-Feb-04
-38       7921  9-Feb-04
-39       7931  1-Mar-04
-40       7933  4-Mar-04
-41       7575  6-Mar-04
-42       6455 17-Mar-04
-43       8099 20-Mar-04
-44       6248  5-Apr-04
-45      29994 24-Apr-04
-46       6478 25-Apr-04
-47       7046 11-May-04
-48       7059 18-May-04
-49       7591 27-May-04
-50       7597  9-Jun-04
-51       7945 12-Jun-04
-52       5684 11-Jul-04
-53       6258 21-Sep-04
-54       7434  8-Oct-04
-55       6889 24-Oct-04
-56       7315 25-Oct-04
-57       7437 31-Oct-04
-58       7610  5-Nov-04
-59       7488  4-Jan-05
-60      25665 20-Jan-05
-61       7626 26-Jan-05
-62       7639 31-Jan-05
-63       7658  8-Apr-05
-64       7988 23-May-05
-65      19888 14-Nov-05
-66       8177 18-Nov-05
-67       7178 25-Nov-05
-68       7454 28-Nov-05
-69       7237 30-Nov-05
-70       6632  2-Dec-05
-71       6635  5-Dec-05
-72       7686 15-Dec-05
-73      36836  6-Feb-06
-74      36994  1-Mar-06
-75      37184 29-Mar-06
-76      37464  9-May-06
-77      37644  4-Jun-06
-78      37774 23-Jun-06
-79      38014 29-Jul-06
-80      38024 30-Jul-06
-81      38369 19-Sep-06
-82      38519 11-Oct-06
-83      38589 21-Oct-06
-84      38760 13-Nov-06
-85      38960 13-Dec-06
-86      38990 17-Dec-06
-87      39000 19-Dec-06
-                                                                                                    Title
-1                                                      Citing Security, U.S. Jails Iraqis It Used in Plot
-2                                                            Iraq Threatens To Shoot Down U.S. Spy Planes
-3                                             Restrictions on Iraq Will Stay in Force, U.N. Council Rules
-4                                              U.S. Used U.N. Team to Place Spy Device in Iraq, Aides Say
-5                                                U.S. More Isolated In U.N. on Keeping The Iraq Sanctions
-6                                                             At Iraq's Backdoor, Turkey Flouts Sanctions
-7                                           Congress Returning to Take Up Domestic Security Plan and Iraq
-8                                                 Bush's Push on Iraq at U.N.: Headway, Then New Barriers
-9                                                          U.S. Aides Split On Assessment Of Iraq's Plans
-10                                                Iraq Tour of Suspected Sites Gives Few Clues on Weapons
-11                                     In Opening the Gates of Its Gulag, Iraq Unleashes Pain and Protest
-12 THREATS AND RESPONSES: NERVOUS NEIGHBORS; \nChaos, or Democracy, in Iraq Could Be Unsettling to Saudis
-13                 THREATS AND RESPONSES: THE EUROPEANS; \nWith Iraq Stance, Chirac Strives for Relevance
-14                              A NATION AT WAR: TROOPS; \nG.I.'s and Marines See Little Iraqi Resistance
-15                                A NATION AT WAR: THE SCENE; \nMuted Joy as Troops Capture an Iraqi Town
-16                     A NATION AT WAR: BAGHDAD; \nWarning of Doom, Edgy Iraqi Leaders Put On Brave Front
-17        A NATION AT WAR: THE ATTACK; \nNighttime Ambush in Iraqi City: An Episode in a Drawn-Out Battle
-18               A NATION AT WAR: THE PRESIDENT; \nHow 3 Weeks of War in Iraq Looked From the Oval Office
-19      A NATION AT WAR: GREEN BERETS; \nTrained for War, 12 Green Berets Keep the Peace in an Iraqi Town
-20                             A NATION AT WAR: BAGHDAD; \nBack at Work, Iraqis Discover Offices in Chaos
-21                         AFTEREFFECTS: VIOLENCE; \nG.I.'s Kill 2 More Protesters in an Angry Iraqi City
-22       AFTEREFFECTS: A NATION'S FUTURE; \nU.S. Is Now in Battle for Peace After Winning the War in Iraq
-23                          AFTEREFFECTS: SHIITE LEADERSHIP; \nBack in Iraq, A Cleric Urges Islamic Rules
-24         AFTER THE WAR: THE OCCUPATION; \nG.I.'s in Iraqi City Are Stalked By Faceless Enemies at Night
-25                                                                                     Uneasiness in Iraq
-26                         AFTER THE WAR: SECURITY; \nU.S. Is Creating An Iraqi Militia To Relieve G.I.'s
-27                  AFTER THE WAR: COVERT OPERATIONS; \nU.S. Moved to Undermine Iraqi Military Before War
-28          AFTER THE WAR: THE ATTACK; \nInquiry in U.N. Bombing Focuses On Possible Ties to Iraqi Guards
-29                                              In First Encounter, Democrats Hit Bush Over Jobs and Iraq
-30                                                                Drafting of Charter Deeply Divides Iraq
-31                                                             Blair Is Conciliatory But Firm on Iraq War
-32                THE STRUGGLE FOR IRAQ: COUNTERINSURGENCY; \nNew Spy Gear Aims to Thwart Attacks in Iraq
-33                     A REGION INFLAMED: COMBAT; 46 Iraqis Die in Fierce Fight Between Rebels and G.I.'s
-34                                                                                  Bomb Kills 17 in Iraq
-35                                        Kurdish Region in Northern Iraq Will Get to Keep Special Status
-36                                                        Report on Iraq Case Clears Blair and Faults BBC
-37                                                         Assassinations Tear Into Iraq's Educated Class
-38                                                      Iraqi Militias Resisting U.S. Pressure to Disband
-39                                                                            Iraqi Oil Industry Rebounds
-40                                                        Cleansing Iraqi Bomb Victims Takes Its Own Toll
-41                                      Iraqi Shiites, in Setback to U.S., Fail to Sign Temporary Charter
-42                                                       For Iraqis in Harm's Way, $5,000 and 'I'm Sorry'
-43                                                                Bush Urges Nations To Help Rebuild Iraq
-44                                               7 U.S. Soldiers Die in Iraq as a Shiite Militia Rises Up
-45                                                                           Home From Iraq, and Homeless
-46                                                   Decision on Possible Attack On Iraqi Town Seems Near
-47                                                        Head of Inquiry On Iraq Abuses Now in Spotlight
-48                                                        M.P.'s Received Orders to Strip Iraqi Detainees
-49                                                            Iraqi Rejects Top Job; Cleric's Aide Seized
-50                                          Ex-C.I.A. Aides Say Iraq Leader Helped Agency in 90's Attacks
-51                                                          In Shift, Cleric Backs Interim Setup for Iraq
-52                                                        Bad Iraq Intelligence Cost Lives, Democrats Say
-53                                          In Harshest Critique Yet, Kerry Attacks Bush Over War in Iraq
-54                                                         Pentagon Sets Steps to Retake Iraq Rebel Sites
-55                                                           Rebel Attacks Kill 18 Iraqis; G.I.'s Injured
-56                                                    Huge Cache of Explosives Vanished From Site in Iraq
-57                                                      In Iraq, U.S. Officials Cite Obstacles to Victory
-58                                                           Iraqi Officials To Allow Vote By Expatriates
-59                                                           U.S. May Add Advisers to Aid Iraq's Military
-60                                              Public Voicing Doubts on Iraq And the Economy, Poll Finds
-61                                                                           Iraqis Abroad Seem Reluctant
-62                                                     Defying Threats, Millions of Iraqis Flock to Polls
-63                                          Shiite Leader Named Iraq Premier To End 2 Months of Wrangling
-64                                                  Rebel Iraq Cleric Hints He'll Shift To Political Path
-65                                                             Jordan Arrests Iraqi Woman In Hotel Blasts
-66                                           Issuing Contracts, Ex-Convict Took Bribes in Iraq, U.S. Says
-67                                                        Lost Amid the Rising Tide of Deatainees in Iraq
-68                                    As Calls for an Iraq Pullout Rise, 2 Political Calendars Loom Large
-69                                                               Iraq Is Struck By New Wave Of Abductions
-70                                                   Profusion of Rebel Groups Helps Them Survive in Iraq
-71                                                                            Mob Attacks Ex-Iraq Premier
-72                                     Iraqis Open Vote for Parliament; An Islamist-Secular Split Is Seen
-73                                                       Pentagon Widens Program to Foil Bombings in Iraq
-74                                                 Major Offensive by Insurgents Kills at Least 75 Iraqis
-75                                                            Bush Opposes Iraq's Premier, Shiites Report
-76                                            2 Years Later, Slayings in Iraq And Lost Cash Are Mysteries
-77                                           Attacks on Oil Industry in Iraq Aid a Vast Smuggling Network
-78                                                            Senate Rejects Calls to Begin Iraq Pullback
-79                                                         Violence in Iraq Creating Chaos In Bank System
-80                                                       Partisan Divide on Iraq Exceeds Split on Vietnam
-81                                                               High Death Tolls in Afghanistan and Iraq
-82                                                             3rd Iraq Death Has One Town Shaken to Core
-83                                             Militias Battle for Iraqi City As Shiite Rivalry Escalates
-84                                                        Influence Rises But Base Frays For Iraqi Cleric
-85                                                 White House to Delay Shift On Iraq Until Early in 2007
-86                                                 Iraq's Legal System Staggers Beneath the Weight of War
-87                                                                         Iraqi Ex-Minister Escapes Jail
-                                                                                                                                                              Subject
-1                                                                                                                Group of CIA Iraqis detained, questions of espionage
-2                                                                                                                                        iraq threatens US spy planes
-3                                                                                                        U.N. Security Council votes to extend sanctions against Iraq
-4                                                                                                                              US inspections of Iraq weapons program
-5                                                                                                                       US does not support lifting Iraqi oil Embargo
-6                                                                                                 Turkey engages in sanctions-busted smuggling tolerated by UN and US
-7                                                                                                                                                  Congress returning
-8                                                                                                                                                       Bush and Iraq
-9                                                                                                                                                   US plans for Iraq
-10                                                                                                                                                Iraqi weapons sites
-11                                                                                                                                        amnesty for iraqi prisoners
-12                                                                                                                   war in Iraq could pose problems for Saudi Arabia
-13                                                                                                                                               Chirac's motivations
-14                                                                                                                                Iraqis putting up little resistance
-15                                                                                                                                       capture of Iraqi border town
-16                                                                                                                   attitudes of Iraqi leaders as US troops approach
-17                                                                                                                              ambush in Nasiriya by American troops
-18                                                                                                                               view of the war from the oval office
-19                                                                                                                             Green Berets working to rebuild a city
-20                                                                                                                                  Iraqis go back to work in Baghdad
-21                                                                                                                                       Iraqis protest US occupation
-22                                                                                                                                      creating a new nation of iraq
-23                                                                                                                       Shiite cleric calls for islamic rule in iraq
-24                                                                                                                              US troops fighting unseen foe in Iraq
-25                                                                                                                                          US soldier killed in Iraq
-26                                                                                                                                       US creating an Iraqi militia
-27                                                                                                                           pre-Iraq war covert operations by the US
-28                                                                                                                  investigation into bombing of UN building in Iraq
-29                                                                                                                 first debate of democratic presidential candidates
-30                                                                                                        dispute arising over Iraqi control of drafting constitution
-31                                                                                                                     Blair defends UK decision to go to war in Iraq
-32                                                                                                                                          New spy gear used in Iraq
-33                                                                                                                 American soldiers kill guerrilla attackers in Iraq
-34                                                                                                                                                       bomb in Iraq
-35                                                                                                                              Post-Hussein Iraq; regional autonomy.
-36 Prime Minister Blair cleared of BBC accusation that his government knowingly useng faulty intelligence on Iraq to justify its participation in the U.S.-led war. .
-37                                                                                          Assassination campaign against Iraqi educated middle-class professionals.
-38                                                                     Iraq insurgency; refusal by large political parties in Iraq to disband their private militias.
-39                                                                                                                                Recovery of the Iraqi oil industry.
-40                                Iraq; sectiarian struggle; large number of Shiite dead create strain for those who must wash the bodies for a proper Muslim burial.
-41                                                                                           Iraq constitution; Shiite leaders refuse to sign temporary constitution.
-42                                                                                                          U.S. policy towards Iraqi victims of "collateral damage."
-43                                                        Bush calls on international community to increase support for the reconstruction and stabilization of Iraq.
-44                                                                                                   Large-scale Shiite uprising leads to fighting and 7 U.S. killed.
-45                                                                                                           A returned soldier from Iraq who found herself homeless.
-46                                                                    U.S. military's weighing of options to re-taking insurgent-controlled town of Falluja by storm.
-47                                                                                                            Abu Ghraib scandal; profile of chief Army investigator.
-48                                                                                               Abu Ghraib scandal; testimony by head of military intelligence unit.
-49                                         Rejection by Iraqi mooted as possible head of interim governing council to serve; capture of aid to Shiite militia leader.
-50                      Background of designated provisional Prime Minister of Iraq; alleged role in CIA-run sabotage operations against Saddam Hussein in the 1990s.
-51                                                                               Support of anti-U.S. Shiite leader Moqtada al-Sadr for provisional Iraqi government.
-52                                                          Presidential election; Kerry's use of Senate report on pre-war intelligence to attack the administration.
-53                                                                                                 Presidential campaign; strong Kerry attack on Bush regarding Iraq.
-54                                                                  Iraq insurgency; general plans by Pentagon to re-take Iraqi cities still under insurgent control.
-55                                                                                     Iraq insurgency; attacks against American and allied Iraqi forces; casualties.
-56                                                  Iraq occupation; disappearance after fall of Saddam Hussein of 380 tons of explosive from known ammunition depot.
-57                                                           Iraq insurgency; military commanders' assessments of insurgent strategy and probability of U.S. success.
-58                                                                                             Iraq democratization; general election; question of expatriate voting.
-59                                                                                            American military advisers needed to help struggling Iraqi police force
-60                                                                                                       Public view of Bush administration; Iraq and social security
-61                                                                                                                                                   Election in Iraq
-62                                                                                                                                    Voter turnout in Iraqi election
-63                                                                                                         Shiite named as prime minister in Iraq after long deadlock
-64                                                                                                                                          al-Sadr to enter politics
-65                                                                                                                     arrest of women linked to Jordan hotel bombers
-66                                                                                                                          Man charged with accepting bribes in Iraq
-67                                                                                                                             problems of organizing Iraqi detainees
-68                                                                                                                             debate over timetable for leaving Iraq
-69                                                                                                                                German aid worker kidnapped in Iraq
-70                                                                      different types of insurgent groups in Iraq, Bush promises "complete victory" over insurgents
-71                                                                                                                                  Former Iraqi PM attacked by a mob
-72                                                                                                                                                     Iraqi election
-73                                                                                                               war in Iraq: increased spending to protect US troops
-74                                                                                                                                          Insurgents strike in Iraq
-75                                                                                                                                          Bush opposes Iraqi leader
-76                                                            Iraq: American government cannot solve killings of two Americans and disappearance of large sum of cash
-77                                                                                                                                      Iraq: attacks on oil industry
-78                                                                                                                     Senate rejects call to pull troops out of Iraq
-79                                                                                                             Violence in Iraq creates chaos in local banking system
-80                                                                                                             Partisan divide over Iraq compared to split on Vietnam
-81                                                                                                                     Photo: high death toll in Afghanistan and Iraq
-82                                                                                                                     Third soldier from Highland, NY killed in Iraq
-83                                                                                                                         Militas battle for southeastern Iraqi city
-84                                                                                      Influence of Iraqi cleric Moktata al-Sadr rises, but his power base contracts
-85                                                                                                                White House plans to delay shift on Iraq until 2007
-86                                                                                                                          Iraq's legal system behind because of war
-87                                                                                                                Iraq's former electriciy minister escapes from jail
-   Topic.Code
-1          16
-2          16
-3          16
-4          16
-5          19
-6          19
-7          20
-8          16
-9          16
-10         16
-11         16
-12         19
-13         19
-14         16
-15         16
-16         16
-17         16
-18         16
-19         16
-20         16
-21         19
-22         16
-23         19
-24         16
-25         16
-26         16
-27         16
-28         16
-29         20
-30         16
-31         19
-32         16
-33         16
-34         16
-35         16
-36         19
-37         19
-38         19
-39         19
-40         19
-41         19
-42         16
-43         16
-44         16
-45         14
-46         16
-47         16
-48         16
-49         16
-50         16
-51         19
-52         16
-53         20
-54         16
-55         16
-56         16
-57         16
-58         19
-59         16
-60         20
-61         19
-62         19
-63         19
-64         19
-65         19
-66         16
-67         16
-68         16
-69         19
-70         16
-71         19
-72         19
-73         16
-74         19
-75         16
-76         16
-77         16
-78         16
-79         19
-80         16
-81         16
-82         16
-83         19
-84         19
-85         16
-86         16
-87         19</code></pre>
+<pre><code># A tibble: 20 × 2
+   lowercase_words count
+   &lt;chr&gt;           &lt;int&gt;
+ 1 in                391
+ 2 to                346
+ 3 of                345
+ 4 the               319
+ 5 a                 287
+ 6 and               208
+ 7 for               195
+ 8 on                165
+ 9 at                 93
+10 by                 55
+11 as                 49
+12 report             34
+13 special            34
+14 an                 32
+15 but                23
+16 or                 19
+17 bin                 4
+18 if                  4
+19 is                  2
+20 vs                  2</code></pre>
+</div>
+</div>
+<p>The graph below shows the number of election-related articles published in each month in the period 1996-2006. The graph shows spikes in election-related articles in the months January, May, July, September, October, and November. This spike in articles from September through November matches my expectations for the data, since elections in the US occur in November, and September and October are heavy campaigning months. I was surprised to see the spikes in January and May, which I hypothesize are attributable to inaugurations and primaries, respectively. Although there are relatively few election related articles represented here, it is clear that their publication usually occurs around the time of significant political/electoral events.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>election_articles <span class="ot">&lt;-</span> grouped_month <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">election =</span> <span class="fu">str_detect</span>(Title, <span class="st">"elect|vote|voting"</span>) <span class="sc">|</span> <span class="fu">str_detect</span>(Subject, <span class="st">"elect|vote|voting"</span>)) <span class="sc">|&gt;</span> <span class="fu">group_by</span>(onlyMonth) <span class="sc">|&gt;</span> <span class="fu">filter</span>(election <span class="sc">==</span> <span class="cn">TRUE</span>)<span class="co"># |&gt; summarize(count = n())</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(election_articles, <span class="fu">aes</span>(<span class="at">x=</span>onlyMonth)) <span class="sc">+</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Month"</span>, <span class="at">y =</span> <span class="st">""</span>, <span class="at">title =</span> <span class="st">"Number of Election-Related Articles by Month from 1996-2006"</span>, <span class="at">subtitle =</span> <span class="st">"Number of Articles"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="nytimes_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 

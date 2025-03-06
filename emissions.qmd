@@ -10,7 +10,7 @@ The TidyTuesday repo can be found here: <https://github.com/rfordatascience/tidy
 
 The following visualization shows the stark increase in the production of nearly every type of resource included in the dataset in recent years, except for thermal coal and natural gas. In addition, there is a clear major rise in oil, gas, coal, and cement production after around 1950, with production of most types increasing sharply until a little after 2000, at which point growth in production continues but at a lower rate.
 
-```{r}
+```{r message=FALSE}
 #| echo: false
 library(tidyverse)
 emissions <- read.csv("emissions.csv")
