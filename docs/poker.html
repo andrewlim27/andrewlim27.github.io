@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>NYTimes Analysis – Andrew Lim</title>
+<title>Poker Simulation – Andrew Lim</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -182,7 +182,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">NYTimes Analysis</h1>
+<h1 class="title">Poker Simulation</h1>
 </div>
 
 
@@ -199,111 +199,175 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Dataset: <a href="https://rdrr.io/cran/RTextTools/man/NYTimes.html">NYTimes Article Headlines</a></p>
-<p>This analysis uses the NYTimes dataset from the RTextTools package. The dataset contains article IDs, publication dates, article headlines, article subjects, and topic codes for articles from the New York Times from 1996 to 2006. The dataset was compiled by Professor Amber E. Boydstun at the University of California, Davis.</p>
-<p>The following graph shows the number of articles published each month from 1996-2006. Upon first inspection, February has the least number of articles published, and January, March, May, and December seem to have the most number of articles published. If we stop to consider why this might be, we quickly notice that February has the fewest days and January, March, May, and December all have 31 days. We inspect this further in the following graph.</p>
+<p>As an avid golfer, I have bore witness to 4 holes-in-one and have been gifted with 3 of my own. As an inexperienced poker player, however, I have yet to receive witness anyone receiving a four-of-a-kind. Given its seemingly elusive nature, I was interested in finding out the probability of being dealt a four-of-a-kind, and if/how the probability changes based on the number of players playing.</p>
+<p>To calculate the probability, I created a simulation of Texas hold ’em, the most popular variety of poker with the following rules:</p>
+<p>“Two cards, known as hole cards, are dealt face down to each player, and then five community cards are dealt face up in three stages. The stages consist of a series of three cards (‘the flop’), later an additional single card (‘the turn’ or ‘fourth street’), and a final card (‘the river’ or ‘fifth street’).”</p>
+<p>“In all casinos, the dealer will burn a card before the flop, turn, and river.”</p>
+<p>- <a href="https://en.wikipedia.org/wiki/Texas_hold_%27em">Texas hold ’em - Wikipedia</a></p>
+<p>I began by creating a function to simulate the movement of cards in a game of Texas hold ’em with n players (dealing to players, burning, dealing community cards).</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RTextTools)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(NYTimes)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">as_tibble</span>(NYTimes), <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tictoc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'tictoc' was built under R version 4.4.3</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>poker_game <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">n =</span> <span class="dv">4</span>){</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  deck <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">52</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  players <span class="ot">&lt;-</span> n</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">#dealing to each player one card at a time</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">#deal one card to myself first</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  hand1 <span class="ot">&lt;-</span> <span class="fu">sample</span>(deck, <span class="dv">1</span>, <span class="at">replace =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">#remove dealt card from the deck</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  deck <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(deck, hand1)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="co">#deal one card to the rest of the players, remove from deck</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  deck <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(deck, <span class="fu">sample</span>(deck, players<span class="dv">-1</span>, <span class="at">replace =</span> <span class="cn">FALSE</span>))</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="co">#deal second card to myself</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  hand1 <span class="ot">&lt;-</span> <span class="fu">append</span>(hand1, <span class="fu">sample</span>(deck, <span class="dv">1</span>, <span class="at">replace =</span> <span class="cn">FALSE</span>))</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  deck <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(deck, hand1)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="co">#deal second card to the rest of the players</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  deck <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(deck, <span class="fu">sample</span>(deck, players<span class="dv">-1</span>, <span class="at">replace =</span> <span class="cn">FALSE</span>))</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="co">#burn one card before the flop</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>  deck <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(deck, <span class="fu">sample</span>(deck, <span class="dv">1</span>, <span class="at">replace =</span> <span class="cn">FALSE</span>))</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  <span class="co">#deal the flop</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  flop <span class="ot">&lt;-</span> <span class="fu">sample</span>(deck, <span class="dv">3</span>, <span class="at">replace =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  deck <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(deck, flop)</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  <span class="co">#burn one card before the turn</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>  deck <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(deck, <span class="fu">sample</span>(deck, <span class="dv">1</span>, <span class="at">replace =</span> <span class="cn">FALSE</span>))</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>  <span class="co">#deal the turn</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>  turn <span class="ot">&lt;-</span> <span class="fu">sample</span>(deck, <span class="dv">1</span>, <span class="at">replace =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>  deck <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(deck, turn)</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>  <span class="co">#burn one card before the river</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>  deck <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(deck, <span class="fu">sample</span>(deck, <span class="dv">1</span>, <span class="at">replace =</span> <span class="cn">FALSE</span>))</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>  <span class="co">#deal the river</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>  river <span class="ot">&lt;-</span> <span class="fu">sample</span>(deck, <span class="dv">1</span>, <span class="at">replace =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a><span class="co">#  deck &lt;- setdiff(deck, river)</span></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>  <span class="co">#returns my hand plus the community cards</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">append</span>(hand1, <span class="fu">append</span>(flop, <span class="fu">append</span>(turn, river))))</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a><span class="co">#simulates my hand in a game of poker with four players</span></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a><span class="fu">poker_game</span>(<span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 4 × 5
-  Article_ID Date     Title                                   Subject Topic.Code
-       &lt;int&gt; &lt;fct&gt;    &lt;fct&gt;                                   &lt;fct&gt;        &lt;int&gt;
-1      41246 1-Jan-96 Nation's Smaller Jails Struggle To Cop… Jails …         12
-2      41257 2-Jan-96 FEDERAL IMPASSE SADDLING STATES WITH I… Federa…         20
-3      41268 3-Jan-96 Long, Costly Prelude Does Little To Al… Conten…         20
-4      41279 4-Jan-96 Top Leader of the Bosnian Serbs Now Un… Bosnia…         19</code></pre>
-</div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Adding a column onlyMonth that has extracts the "Jan" or similar from the date column using regular expressions. Converting this column into factors allows us to order the months chronologically. I grouped by this column and then plotted the number of articles published each month to get the following graph:</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>grouped_month <span class="ot">&lt;-</span> NYTimes <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">onlyMonth =</span> <span class="fu">factor</span>(<span class="fu">str_extract</span>(Date, <span class="st">"(?&lt;=-)[a-z|A-Z]+"</span>), <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Jan"</span>, <span class="st">"Feb"</span>, <span class="st">"Mar"</span>, <span class="st">"Apr"</span>, <span class="st">"May"</span>, <span class="st">"Jun"</span>, <span class="st">"Jul"</span>, <span class="st">"Aug"</span>, <span class="st">"Sep"</span>, <span class="st">"Oct"</span>, <span class="st">"Nov"</span>, <span class="st">"Dec"</span>))) <span class="sc">|&gt;</span> <span class="fu">group_by</span>(onlyMonth)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#NYTimes &lt;- fct_relevel(onlyMonth, levels = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"))</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(grouped_month, <span class="fu">aes</span>(<span class="at">x =</span> onlyMonth)) <span class="sc">+</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Month"</span>, <span class="at">y =</span> <span class="st">""</span>, <span class="at">subtitle =</span> <span class="st">"Number of Articles Published"</span>, <span class="at">title =</span> <span class="st">"Number of Articles Published Each Month from 1996-2006"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="nytimes_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
+<pre><code>[1] 45 52  9 18 33  4  5</code></pre>
 </div>
 </div>
-</div>
-<p>The graph below more clearly shows that more articles are published during months with more days. Although we can’t prove why this is, the New York Times is published every day, meaning that months with more days likely have a higher quantity of articles simply because they have more editions published.</p>
+<p>The output above represents the hand dealt to the player. The deck is generated as a vector of integers from 1 to 52, and each “card’s” face value is determined by its number modulus 13. If we get four cards for which their representative number mod 13 are equal, then we have gotten four-of-a-kind.</p>
+<p>Next, I created a function to check if a hand has four-of-a-kind.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Groups the months based on the number of days in each month, and then computes the average number of articles published in each month in the period from 1996-2006.</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>new_grouped_month <span class="ot">&lt;-</span> grouped_month <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">numDays =</span> <span class="fu">ifelse</span>(<span class="fu">str_detect</span>(onlyMonth, <span class="st">"Feb"</span>), <span class="st">"28/29"</span>, <span class="fu">ifelse</span>(<span class="fu">str_detect</span>(onlyMonth, <span class="st">"Jan|Mar|May|Jul|Aug|Oct|Dec"</span>), <span class="st">"31"</span>, <span class="st">"30"</span>))) <span class="sc">|&gt;</span> <span class="fu">group_by</span>(numDays) <span class="sc">|&gt;</span> <span class="fu">summarize</span>(<span class="at">count =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">average =</span> <span class="fu">ifelse</span>(numDays <span class="sc">==</span> <span class="st">"31"</span>, count<span class="sc">/</span><span class="dv">7</span>, <span class="fu">ifelse</span>(numDays <span class="sc">==</span> <span class="st">"30"</span>, count<span class="sc">/</span><span class="dv">4</span>, count)))</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(new_grouped_month, <span class="fu">aes</span>(<span class="at">x =</span> numDays, <span class="at">y =</span> average)) <span class="sc">+</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Number of Days in Month"</span>, <span class="at">y =</span> <span class="st">""</span>, <span class="at">subtitle =</span> <span class="st">"Average Number of Articles Published"</span>, <span class="at">title =</span> <span class="st">"Number of Articles Published Monthly Based on the Length of the Month"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="nytimes_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>The table below shows the most frequent lowercase words found in article headlines. Most of the words are very short in length, indicating that the New York Times prefers to keep words above 2-3 characters long capitalized. Notably, however, the words “special” and “report” both appear lowercased 34 times. Upon further inspection, I found that the New York Times ran an article series called “A special report”, reporting on important world-scale events. This series accounts for the otherwise strange appearance of these long lowercased words.</p>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>lowercase <span class="ot">&lt;-</span> NYTimes <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">lowercase_words =</span> <span class="fu">str_extract_all</span>(Title, <span class="st">"([^'-.</span><span class="sc">\\</span><span class="st">&amp;]</span><span class="sc">\\</span><span class="st">b)[a-z][a-z|']*</span><span class="sc">\\</span><span class="st">b"</span>)) <span class="sc">|&gt;</span> <span class="fu">unnest</span>(lowercase_words) <span class="sc">|&gt;</span> <span class="fu">select</span>(lowercase_words) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">lowercase_words =</span> <span class="fu">str_replace</span>(lowercase_words, <span class="st">" "</span>, <span class="st">""</span>)) <span class="sc">|&gt;</span> <span class="fu">group_by</span>(lowercase_words) <span class="sc">|&gt;</span> <span class="fu">summarize</span>(<span class="at">count =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(count)) <span class="sc">|&gt;</span> <span class="fu">head</span>(<span class="at">n=</span><span class="dv">20</span>) <span class="sc">|&gt;</span> <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>four_of_a_kind <span class="ot">&lt;-</span> <span class="cf">function</span>(nada, <span class="at">hand =</span> <span class="fu">poker_game</span>(<span class="dv">4</span>)){</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  card_values <span class="ot">&lt;-</span> hand <span class="sc">%%</span> <span class="dv">13</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">any</span>(<span class="fu">table</span>(card_values) <span class="sc">==</span> <span class="dv">4</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">four_of_a_kind</span>(<span class="at">hand =</span> <span class="fu">poker_game</span>(<span class="dv">4</span>)) <span class="sc">|&gt;</span> <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 20 × 2
-   lowercase_words count
-   &lt;chr&gt;           &lt;int&gt;
- 1 in                391
- 2 to                346
- 3 of                345
- 4 the               319
- 5 a                 287
- 6 and               208
- 7 for               195
- 8 on                165
- 9 at                 93
-10 by                 55
-11 as                 49
-12 report             34
-13 special            34
-14 an                 32
-15 but                23
-16 or                 19
-17 bin                 4
-18 if                  4
-19 is                  2
-20 vs                  2</code></pre>
+<pre><code>[1] FALSE</code></pre>
 </div>
 </div>
-<p>The graph below shows the number of election-related articles published in each month in the period 1996-2006. The graph shows spikes in election-related articles in the months January, May, July, September, October, and November. This spike in articles from September through November matches my expectations for the data, since elections in the US occur in November, and September and October are heavy campaigning months. I was surprised to see the spikes in January and May, which I hypothesize are attributable to inaugurations and primaries, respectively. Although there are relatively few election related articles represented here, it is clear that their publication usually occurs around the time of significant political/electoral events.</p>
+<p>The output above indicates whether the hand inputted into the function contains a four-of-a-kind.</p>
+<p>The next step is to simulate many poker games to get an approximate probability of being dealt a four-of-a-kind.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>election_articles <span class="ot">&lt;-</span> grouped_month <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">election =</span> <span class="fu">str_detect</span>(Title, <span class="st">"elect|vote|voting"</span>) <span class="sc">|</span> <span class="fu">str_detect</span>(Subject, <span class="st">"elect|vote|voting"</span>)) <span class="sc">|&gt;</span> <span class="fu">group_by</span>(onlyMonth) <span class="sc">|&gt;</span> <span class="fu">filter</span>(election <span class="sc">==</span> <span class="cn">TRUE</span>)<span class="co"># |&gt; summarize(count = n())</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(election_articles, <span class="fu">aes</span>(<span class="at">x=</span>onlyMonth)) <span class="sc">+</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Month"</span>, <span class="at">y =</span> <span class="st">""</span>, <span class="at">title =</span> <span class="st">"Number of Election-Related Articles by Month from 1996-2006"</span>, <span class="at">subtitle =</span> <span class="st">"Number of Articles"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">47</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">100000</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tic</span>()</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>odds_map <span class="ot">&lt;-</span> <span class="fu">map_lgl</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span>n), <span class="sc">~</span> <span class="fu">four_of_a_kind</span>(<span class="at">nada =</span> .x))</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>90.72 sec elapsed</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(odds_map)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.00161</code></pre>
+</div>
+</div>
+<p>The above output is the estimated probability of being dealt a four-of-a-kind in a poker game with four players.</p>
+<p>After simulating 100,000 poker games, I found that, in a game with four players, the odds of being dealt a four-of-a-kind are about 0.168%, or about 1 in 600. Given I have played approximately ~60 hands of poker, it makes sense that I have yet to receive a four-of-a-kind.</p>
+<p>Given the above findings, I wanted to know if I would be less likely to receive a four-of-a-kind in a game with more players, given that cards I need for a four-of-a-kind could be dealt to other players.</p>
+<p>To find out if this is the case, I ran the simulation over poker games with 2 through 8 players and plotted the findings below:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">47</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">100000</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tic</span>()</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">8</span>, <span class="cf">function</span>(x) {</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  prob <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">map_lgl</span>(<span class="dv">1</span><span class="sc">:</span>n, <span class="sc">~</span> <span class="fu">four_of_a_kind</span>(<span class="at">nada =</span> .x)))  <span class="co"># Probability estimation</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">players =</span> x, <span class="at">probability =</span> prob)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>599.36 sec elapsed</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 7 × 2
+  players probability
+    &lt;int&gt;       &lt;dbl&gt;
+1       2     0.00161
+2       3     0.0018 
+3       4     0.0017 
+4       5     0.00156
+5       6     0.00144
+6       7     0.00176
+7       8     0.0017 </code></pre>
+</div>
+</div>
+<p>The above table shows the probabilities of being dealt a four-of-a-kind in poker games with 2-8 players. There is no clear trend in the probabilities across multiple runs of the simulation. I would run a higher number of iterations (i.e.&nbsp;n = 1,000,000) to get more precise probabilities but the n = 100,000 values take 10 minutes to render.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(results, <span class="fu">aes</span>(<span class="at">x =</span> players, <span class="at">y =</span> probability)) <span class="sc">+</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">"blue"</span>, <span class="at">size =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.002</span>)) <span class="sc">+</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Probability of Getting Four-of-a-Kind vs. Number of Players"</span>,</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Number of Players"</span>,</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Estimated Probability"</span>,</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Monte Carlo Simulation with n = 100,000 per player count"</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="nytimes_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="poker_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
+<p>In the above graph we see small variations in the probabilities for the different numbers of players. However, these variations are due to the (relatively) small sample size of 100,000 rounds, and re-running the simluation would give different numbers still distributed around 0.00168. With a larger sample size, we would expect to see less variation due to the law of large numbers.</p>
+<p>Interestingly, the number of players in a poker game does not affect one’s odds of being dealt a four-of-a-kind. I had hypothesized otherwise, since more players playing means there is a higher chance that someone is dealt a card you need for a four-of-a-kind, but this conclusion demonstrates that it doesn’t make a difference if a card is in a different player’s hand or still in the deck after all the cards are dealt (since 45 cards will always not appear in your hand). If I was interested in getting a four-of-a-kind as quickly as possible, I could act on these findings by playing as many hands as possible with only one other player, since the probability of getting a four-of-a-kind in any given round is constant and each round would play quicker than compared to a game with 3 or more players.</p>
 
 
 
