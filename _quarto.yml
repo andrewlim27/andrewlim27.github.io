@@ -20,6 +20,10 @@ website:
         menu: 
          - text: "New York Times Headlines"
            href: nytimes.html
+      - text: "Probability Simulation"
+        menu:
+         - text: "Poker Hands"
+           href: poker.html
 
 format:
   html:

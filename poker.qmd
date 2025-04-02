@@ -1,0 +1,137 @@
+---
+title: "Poker Simulation"
+code-fold: true
+---
+
+As an avid golfer, I have bore witness to 4 holes-in-one and have been gifted with 3 of my own. As an inexperienced poker player, however, I have yet to receive witness anyone receiving a four-of-a-kind. Given its seemingly elusive nature, I was interested in finding out the probability of being dealt a four-of-a-kind, and if/how the probability changes based on the number of players playing.
+
+To calculate the probability, I created a simulation of Texas hold 'em, the most popular variety of poker with the following rules:
+
+"Two cards, known as hole cards, are dealt face down to each player, and then five community cards are dealt face up in three stages. The stages consist of a series of three cards ('the flop'), later an additional single card ('the turn' or 'fourth street'), and a final card ('the river' or 'fifth street')."
+
+"In all casinos, the dealer will burn a card before the flop, turn, and river."
+
+\- [Texas hold 'em - Wikipedia](https://en.wikipedia.org/wiki/Texas_hold_%27em)
+
+I began by creating a function to simulate the movement of cards in a game of Texas hold 'em with n players (dealing to players, burning, dealing community cards).
+
+```{r message=FALSE}
+library(tidyverse)
+library(tictoc)
+poker_game <- function(n = 4){
+  
+  deck <- 1:52
+  players <- n
+  #dealing to each player one card at a time
+  #deal one card to myself first
+  hand1 <- sample(deck, 1, replace = FALSE)
+  #remove dealt card from the deck
+  deck <- setdiff(deck, hand1)
+  
+  #deal one card to the rest of the players, remove from deck
+  deck <- setdiff(deck, sample(deck, players-1, replace = FALSE))
+  
+  #deal second card to myself
+  hand1 <- append(hand1, sample(deck, 1, replace = FALSE))
+  deck <- setdiff(deck, hand1)
+  
+  #deal second card to the rest of the players
+  deck <- setdiff(deck, sample(deck, players-1, replace = FALSE))
+  
+  #burn one card before the flop
+  deck <- setdiff(deck, sample(deck, 1, replace = FALSE))
+  
+  #deal the flop
+  flop <- sample(deck, 3, replace = FALSE)
+  deck <- setdiff(deck, flop)
+  
+  #burn one card before the turn
+  deck <- setdiff(deck, sample(deck, 1, replace = FALSE))
+  
+  #deal the turn
+  turn <- sample(deck, 1, replace = FALSE)
+  deck <- setdiff(deck, turn)
+  
+  #burn one card before the river
+  deck <- setdiff(deck, sample(deck, 1, replace = FALSE))
+  
+  #deal the river
+  river <- sample(deck, 1, replace = FALSE)
+#  deck <- setdiff(deck, river)
+  
+  #returns my hand plus the community cards
+  return(append(hand1, append(flop, append(turn, river))))
+}
+
+#simulates my hand in a game of poker with four players
+poker_game(4)
+```
+
+The output above represents the hand dealt to the player. The deck is generated as a vector of integers from 1 to 52, and each "card's" face value is determined by its number modulus 13. If we get four cards for which their representative number mod 13 are equal, then we have gotten four-of-a-kind.
+
+Next, I created a function to check if a hand has four-of-a-kind.
+
+```{r}
+four_of_a_kind <- function(nada, hand = poker_game(4)){
+  card_values <- hand %% 13
+  any(table(card_values) == 4)
+}
+four_of_a_kind(hand = poker_game(4)) |> print()
+```
+
+The output above indicates whether the hand inputted into the function contains a four-of-a-kind.
+
+The next step is to simulate many poker games to get an approximate probability of being dealt a four-of-a-kind.
+
+```{r}
+set.seed(47)
+n <- 100000
+
+tic()
+odds_map <- map_lgl(c(1:n), ~ four_of_a_kind(nada = .x))
+toc()
+
+mean(odds_map)
+```
+
+The above output is the estimated probability of being dealt a four-of-a-kind in a poker game with four players.
+
+After simulating 100,000 poker games, I found that, in a game with four players, the odds of being dealt a four-of-a-kind are about 0.168%, or about 1 in 600. Given I have played approximately \~60 hands of poker, it makes sense that I have yet to receive a four-of-a-kind.
+
+Given the above findings, I wanted to know if I would be less likely to receive a four-of-a-kind in a game with more players, given that cards I need for a four-of-a-kind could be dealt to other players.
+
+To find out if this is the case, I ran the simulation over poker games with 2 through 8 players and plotted the findings below:
+
+```{r}
+set.seed(47)
+n <- 100000
+tic()
+results <- map_dfr(2:8, function(x) {
+  prob <- mean(map_lgl(1:n, ~ four_of_a_kind(nada = .x)))  # Probability estimation
+  tibble(players = x, probability = prob)
+})
+toc()
+print(results)
+
+```
+
+The above table shows the probabilities of being dealt a four-of-a-kind in poker games with 2-8 players. There is no clear trend in the probabilities across multiple runs of the simulation. I would run a higher number of iterations (i.e. n = 1,000,000) to get more precise probabilities but the n = 100,000 values take 10 minutes to render.
+
+```{r, warning = FALSE}
+
+ggplot(results, aes(x = players, y = probability)) +
+  geom_line(color = "blue", size = 1.2) +
+  geom_point(size = 3, color = "red") +
+  scale_y_continuous(limits = c(0, 0.002)) +
+  labs(
+    title = "Probability of Getting Four-of-a-Kind vs. Number of Players",
+    x = "Number of Players",
+    y = "Estimated Probability",
+    caption = "Monte Carlo Simulation with n = 100,000 per player count"
+  ) +
+  theme_minimal()
+```
+
+In the above graph we see small variations in the probabilities for the different numbers of players. However, these variations are due to the (relatively) small sample size of 100,000 rounds, and re-running the simluation would give different numbers still distributed around 0.00168. With a larger sample size, we would expect to see less variation due to the law of large numbers.
+
+Interestingly, the number of players in a poker game does not affect one's odds of being dealt a four-of-a-kind. I had hypothesized otherwise, since more players playing means there is a higher chance that someone is dealt a card you need for a four-of-a-kind, but this conclusion demonstrates that it doesn't make a difference if a card is in a different player's hand or still in the deck after all the cards are dealt (since 45 cards will always not appear in your hand). If I was interested in getting a four-of-a-kind as quickly as possible, I could act on these findings by playing as many hands as possible with only one other player, since the probability of getting a four-of-a-kind in any given round is constant and each round would play quicker than compared to a game with 3 or more players.
