@@ -15,7 +15,7 @@ To calculate the probability, I created a simulation of Texas hold 'em, the most
 
 I began by creating a function to simulate the movement of cards in a game of Texas hold 'em with n players (dealing to players, burning, dealing community cards).
 
-```{r message=FALSE}
+```{r message=FALSE, warning = FALSE}
 library(tidyverse)
 library(tictoc)
 poker_game <- function(n = 4){
