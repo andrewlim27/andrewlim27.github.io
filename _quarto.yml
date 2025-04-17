@@ -24,6 +24,10 @@ website:
         menu:
          - text: "Poker Hands"
            href: poker.html
+      - text: "Ethics Discussion"
+        menu:
+         - text: "OkCupid"
+           href: ethics.html
 
 format:
   html:
