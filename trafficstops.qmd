@@ -9,7 +9,7 @@ I expect to see a decline in search rates after the legalization of marijuana as
 
 We begin by setting up the SQL connection.
 
-```{r message = FALSE}
+```{r message = FALSE, warning = FALSE}
 #| echo: false
 library(RMariaDB)
 library(tidyverse)
