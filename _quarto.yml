@@ -28,6 +28,10 @@ website:
         menu:
          - text: "OkCupid"
            href: ethics.html
+      - text: "SQL Analysis"
+        menu:
+         - text: "Stanford Open Policing Project"
+           href: trafficstops.html
 
 format:
   html:
