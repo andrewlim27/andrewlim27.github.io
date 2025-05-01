@@ -7,8 +7,6 @@ One area of interest in the data is regarding vehicular searches. Approximately 
 
 I expect to see a decline in search rates after the legalization of marijuana as police officers no longer need to conduct vehicular searches if a person possesses marijuana since it is not illegal.
 
-We begin by setting up the SQL connection.
-
 ```{r message = FALSE, warning = FALSE}
 #| echo: false
 library(RMariaDB)
