@@ -106,7 +106,7 @@ print(WA_table)
 print(CA_table)
 ```
 
-The below graphs show the impact of  We can see that Colorado and Washington saw nearly 50% decreases in vehicular search rates after legalization of marijuana. However, California saw a 50% increase in vehicular searches.
+The below graphs show the impact of the legalization of marijuana on vehicular search rates. We can see that Colorado and Washington saw nearly 50% decreases in search rates after legalization of marijuana. However, California saw a 50% increase in vehicular searches.
 
 ```{r}
 ggplot(CO_table,
