@@ -174,6 +174,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
     </ul>
   </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-sql-analysis" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">SQL Analysis</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-sql-analysis">    
+        <li>
+    <a class="dropdown-item" href="./trafficstops.html">
+ <span class="dropdown-text">Stanford Open Policing Project</span></a>
+  </li>  
+    </ul>
+  </li>
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
@@ -215,7 +226,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>The following graph shows the number of articles published each month from 1996-2006. Upon first inspection, February has the least number of articles published, and January, March, May, and December seem to have the most number of articles published. If we stop to consider why this might be, we quickly notice that February has the fewest days and January, March, May, and December all have 31 days. We inspect this further in the following graph.</p>
 <div class="cell">
 <details class="code-fold">
-<summary>Code</summary>
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RTextTools)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(NYTimes)</span>
@@ -231,13 +242,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 4      41279 4-Jan-96 Top Leader of the Bosnian Serbs Now Un… Bosnia…         19</code></pre>
 </div>
 <details class="code-fold">
-<summary>Code</summary>
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Adding a column onlyMonth that has extracts the "Jan" or similar from the date column using regular expressions. Converting this column into factors allows us to order the months chronologically. I grouped by this column and then plotted the number of articles published each month to get the following graph:</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>grouped_month <span class="ot">&lt;-</span> NYTimes <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">onlyMonth =</span> <span class="fu">factor</span>(<span class="fu">str_extract</span>(Date, <span class="st">"(?&lt;=-)[a-z|A-Z]+"</span>), <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Jan"</span>, <span class="st">"Feb"</span>, <span class="st">"Mar"</span>, <span class="st">"Apr"</span>, <span class="st">"May"</span>, <span class="st">"Jun"</span>, <span class="st">"Jul"</span>, <span class="st">"Aug"</span>, <span class="st">"Sep"</span>, <span class="st">"Oct"</span>, <span class="st">"Nov"</span>, <span class="st">"Dec"</span>))) <span class="sc">|&gt;</span> <span class="fu">group_by</span>(onlyMonth)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#NYTimes &lt;- fct_relevel(onlyMonth, levels = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"))</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(grouped_month, <span class="fu">aes</span>(<span class="at">x =</span> onlyMonth)) <span class="sc">+</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Month"</span>, <span class="at">y =</span> <span class="st">""</span>, <span class="at">subtitle =</span> <span class="st">"Number of Articles Published"</span>, <span class="at">title =</span> <span class="st">"Number of Articles Published Each Month from 1996-2006"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>grouped_month <span class="ot">&lt;-</span> NYTimes <span class="sc">|&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">onlyMonth =</span> <span class="fu">factor</span>(<span class="fu">str_extract</span>(Date, <span class="st">"(?&lt;=-)[a-zA-Z]+"</span>), <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Jan"</span>, <span class="st">"Feb"</span>, <span class="st">"Mar"</span>, <span class="st">"Apr"</span>, <span class="st">"May"</span>, <span class="st">"Jun"</span>, <span class="st">"Jul"</span>, <span class="st">"Aug"</span>, <span class="st">"Sep"</span>, <span class="st">"Oct"</span>, <span class="st">"Nov"</span>, <span class="st">"Dec"</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(onlyMonth)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(grouped_month, <span class="fu">aes</span>(<span class="at">x =</span> onlyMonth, <span class="at">color =</span> onlyMonth)) <span class="sc">+</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Month"</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">""</span>,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Number of Articles Published"</span>,</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Number of Articles Published Each Month from 1996-2006"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -250,13 +266,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>The graph below more clearly shows that more articles are published during months with more days. Although we can’t prove why this is, the New York Times is published every day, meaning that months with more days likely have a higher quantity of articles simply because they have more editions published.</p>
 <div class="cell">
 <details class="code-fold">
-<summary>Code</summary>
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Groups the months based on the number of days in each month, and then computes the average number of articles published in each month in the period from 1996-2006.</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>new_grouped_month <span class="ot">&lt;-</span> grouped_month <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">numDays =</span> <span class="fu">ifelse</span>(<span class="fu">str_detect</span>(onlyMonth, <span class="st">"Feb"</span>), <span class="st">"28/29"</span>, <span class="fu">ifelse</span>(<span class="fu">str_detect</span>(onlyMonth, <span class="st">"Jan|Mar|May|Jul|Aug|Oct|Dec"</span>), <span class="st">"31"</span>, <span class="st">"30"</span>))) <span class="sc">|&gt;</span> <span class="fu">group_by</span>(numDays) <span class="sc">|&gt;</span> <span class="fu">summarize</span>(<span class="at">count =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">average =</span> <span class="fu">ifelse</span>(numDays <span class="sc">==</span> <span class="st">"31"</span>, count<span class="sc">/</span><span class="dv">7</span>, <span class="fu">ifelse</span>(numDays <span class="sc">==</span> <span class="st">"30"</span>, count<span class="sc">/</span><span class="dv">4</span>, count)))</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(new_grouped_month, <span class="fu">aes</span>(<span class="at">x =</span> numDays, <span class="at">y =</span> average)) <span class="sc">+</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Number of Days in Month"</span>, <span class="at">y =</span> <span class="st">""</span>, <span class="at">subtitle =</span> <span class="st">"Average Number of Articles Published"</span>, <span class="at">title =</span> <span class="st">"Number of Articles Published Monthly Based on the Length of the Month"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>new_grouped_month <span class="ot">&lt;-</span> grouped_month <span class="sc">|&gt;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">numDays =</span> <span class="fu">ifelse</span>(<span class="fu">str_detect</span>(onlyMonth, <span class="st">"Feb"</span>), <span class="st">"28/29"</span>, <span class="fu">ifelse</span>(<span class="fu">str_detect</span>(onlyMonth, <span class="st">"Jan|Mar|May|Jul|Aug|Oct|Dec"</span>), <span class="st">"31"</span>, <span class="st">"30"</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(numDays) <span class="sc">|&gt;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">count =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">average =</span> <span class="fu">ifelse</span>(numDays <span class="sc">==</span> <span class="st">"31"</span>, count<span class="sc">/</span><span class="dv">7</span>, <span class="fu">ifelse</span>(numDays <span class="sc">==</span> <span class="st">"30"</span>, count<span class="sc">/</span><span class="dv">4</span>, count)))</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(new_grouped_month, <span class="fu">aes</span>(<span class="at">x =</span> numDays, <span class="at">y =</span> average)) <span class="sc">+</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Number of Days in Month"</span>,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">""</span>,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Average Number of Articles Published"</span>,</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Number of Articles Published Monthly Based on the Length of the Month"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -269,8 +292,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>The table below shows the most frequent lowercase words found in article headlines. Most of the words are very short in length, indicating that the New York Times prefers to keep words above 2-3 characters long capitalized. Notably, however, the words “special” and “report” both appear lowercased 34 times. Upon further inspection, I found that the New York Times ran an article series called “A special report”, reporting on important world-scale events. This series accounts for the otherwise strange appearance of these long lowercased words.</p>
 <div class="cell">
 <details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>lowercase <span class="ot">&lt;-</span> NYTimes <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">lowercase_words =</span> <span class="fu">str_extract_all</span>(Title, <span class="st">"([^'-.</span><span class="sc">\\</span><span class="st">&amp;]</span><span class="sc">\\</span><span class="st">b)[a-z][a-z|']*</span><span class="sc">\\</span><span class="st">b"</span>)) <span class="sc">|&gt;</span> <span class="fu">unnest</span>(lowercase_words) <span class="sc">|&gt;</span> <span class="fu">select</span>(lowercase_words) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">lowercase_words =</span> <span class="fu">str_replace</span>(lowercase_words, <span class="st">" "</span>, <span class="st">""</span>)) <span class="sc">|&gt;</span> <span class="fu">group_by</span>(lowercase_words) <span class="sc">|&gt;</span> <span class="fu">summarize</span>(<span class="at">count =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(count)) <span class="sc">|&gt;</span> <span class="fu">head</span>(<span class="at">n=</span><span class="dv">20</span>) <span class="sc">|&gt;</span> <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>lowercase <span class="ot">&lt;-</span> NYTimes <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">lowercase_words =</span> <span class="fu">str_extract_all</span>(Title, <span class="st">"([^'-.</span><span class="sc">\\</span><span class="st">&amp;]</span><span class="sc">\\</span><span class="st">b)[a-z][a-z|']*</span><span class="sc">\\</span><span class="st">b"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(lowercase_words) <span class="sc">|&gt;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(lowercase_words) <span class="sc">|&gt;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">lowercase_words =</span> <span class="fu">str_replace</span>(lowercase_words, <span class="st">" "</span>, <span class="st">""</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(lowercase_words) <span class="sc">|&gt;</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">count =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(count)) <span class="sc">|&gt;</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="at">n=</span><span class="dv">20</span>) <span class="sc">|&gt;</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 20 × 2
@@ -301,11 +333,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>The graph below shows the number of election-related articles published in each month in the period 1996-2006. The graph shows spikes in election-related articles in the months January, May, July, September, October, and November. This spike in articles from September through November matches my expectations for the data, since elections in the US occur in November, and September and October are heavy campaigning months. I was surprised to see the spikes in January and May, which I hypothesize are attributable to inaugurations and primaries, respectively. Although there are relatively few election related articles represented here, it is clear that their publication usually occurs around the time of significant political/electoral events.</p>
 <div class="cell">
 <details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>election_articles <span class="ot">&lt;-</span> grouped_month <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">election =</span> <span class="fu">str_detect</span>(Title, <span class="st">"elect|vote|voting"</span>) <span class="sc">|</span> <span class="fu">str_detect</span>(Subject, <span class="st">"elect|vote|voting"</span>)) <span class="sc">|&gt;</span> <span class="fu">group_by</span>(onlyMonth) <span class="sc">|&gt;</span> <span class="fu">filter</span>(election <span class="sc">==</span> <span class="cn">TRUE</span>)<span class="co"># |&gt; summarize(count = n())</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(election_articles, <span class="fu">aes</span>(<span class="at">x=</span>onlyMonth)) <span class="sc">+</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Month"</span>, <span class="at">y =</span> <span class="st">""</span>, <span class="at">title =</span> <span class="st">"Number of Election-Related Articles by Month from 1996-2006"</span>, <span class="at">subtitle =</span> <span class="st">"Number of Articles"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>election_articles <span class="ot">&lt;-</span> grouped_month <span class="sc">|&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">election =</span> <span class="fu">str_detect</span>(Title, <span class="st">"elect|vote|voting"</span>) <span class="sc">|</span> <span class="fu">str_detect</span>(Subject, <span class="st">"elect|vote|voting"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(onlyMonth) <span class="sc">|&gt;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(election <span class="sc">==</span> <span class="cn">TRUE</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(election_articles, <span class="fu">aes</span>(<span class="at">x=</span>onlyMonth, <span class="at">color=</span>onlyMonth)) <span class="sc">+</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Month"</span>,</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">""</span>,</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Number of Election-Related Articles by Month from 1996-2006"</span>,</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Number of Articles"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -315,6 +354,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+<p><u>Citations</u></p>
+<p>RTextTools. <em>NYTimes Headlines Sample Dataset</em> (compiled by Amber E. Boydstun). Retrieved 13 May 2025 from <a href="https://rdrr.io/cran/RTextTools/man/NYTimes.html" class="uri">https://rdrr.io/cran/RTextTools/man/NYTimes.html</a></p>
 
 
 

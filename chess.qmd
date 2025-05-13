@@ -2,16 +2,20 @@
 title: "Chess"
 ---
 
-This dataset comes from Lichess.org via Mitchell J on Kaggle, representing over 20,000 games of chess collected from users on Lichess.org. Data includes players' ratings, openings played, and outcome of the game (among other data). I accessed it via the TidyTuesday repo from October 1, 2024.
+The following visualization uses a dataset posted by Mitchell J on Kaggle, with the following description:
+
+"This is a set of just over 20,000 games collected from a selection of users on the site Lichess.org, and how to collect more."
+
+Data includes players' ratings, openings played, and outcome of the game (among other data). I accessed it via the TidyTuesday repo from October 1, 2024.
 
 The dataset can be found here: <https://www.kaggle.com/datasets/datasnaek/chess/data>
 
 The TidyTuesday repo can be found here: <https://github.com/rfordatascience/tidytuesday/tree/main/data/2024/2024-10-01>
 
-The following visualization shows the relationship between the number of turns a chess game takes and the difference between the two players' ratings. A positive rating difference indicates that the player playing white had a higher rating than their opponent, and a negative rating difference indicates that the player playing black had a higher rating for that game. The visualization suggests that when there is a large difference between players' ratings, fewer games with over 100 turns are played when compared to games where players' have a small difference in ratings.
+The following visualization shows the relationship between the number of turns a chess game takes and the difference between the two players' ratings. A positive rating difference indicates that the player playing white had a higher rating than their opponent, and a negative rating difference indicates that the player playing black had a higher rating for that game. The visualization suggests that when there is a large difference between players' ratings, fewer games with over 100 turns are played when compared to games where players' have a small difference in ratings. Intuitively, this makes sense. In a game in which both players have similar ratings, it is less likely that one player will outmaneuver the other and reach checkmate quickly than in a game in which one player is far better than the other.
 
 ```{r message=FALSE}
-#| echo: false
+
 library(tidyverse)
 chess <- read.csv("chess.csv")
 ggplot(chess, aes(x= (diff = white_rating-black_rating), y = turns)) +
@@ -20,3 +24,7 @@ ggplot(chess, aes(x= (diff = white_rating-black_rating), y = turns)) +
     x = "Rating Difference",
     y = "Turns")
 ```
+
+[Citations]{.underline}
+
+datasnaek. *Chess Games Dataset (Lichess)*. Kaggle. Retrieved 13 May 2025, from <https://www.kaggle.com/datasets/datasnaek/chess>

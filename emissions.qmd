@@ -8,10 +8,10 @@ The dataset can be found here: <https://carbonmajors.org/Downloads>
 
 The TidyTuesday repo can be found here: <https://github.com/rfordatascience/tidytuesday/tree/main/data/2024/2024-05-21>
 
-The following visualization shows the stark increase in the production of nearly every type of resource included in the dataset in recent years, except for thermal coal and natural gas. In addition, there is a clear major rise in oil, gas, coal, and cement production after around 1950, with production of most types increasing sharply until a little after 2000, at which point growth in production continues but at a lower rate.
+The following visualization shows the stark increase in the production of nearly every type of resource included in the dataset in recent years, except for thermal coal and natural gas. In addition, there is a clear major rise in oil, gas, coal, and cement production after 1950, with production of most types increasing sharply until a little after 2000, at which point growth in production continues but at a lower rate. The increase around 1950 could be due to the post-World War II industrial boom, and the slowing of natural gas and certain types of coal in the 21st century could be due to decarbonization efforts. Trends could be better explained by examining the uses for each of the types of coal.
 
 ```{r message=FALSE}
-#| echo: false
+#| echo: true
 library(tidyverse)
 emissions <- read.csv("emissions.csv")
 emissions <- mutate(emissions, production_value)
@@ -22,3 +22,7 @@ ggplot(emissions) +
     x = "Year",
     y = "Production Level")
 ```
+
+[Citations]{.underline}
+
+InfluenceMap. *Carbon Majors Database* (2025 update). Retrieved 13 May 2025, from <https://carbonmajors.org/Downloads>

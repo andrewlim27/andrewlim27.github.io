@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -140,6 +174,17 @@ ul.task-list li input[type="checkbox"] {
   </li>  
     </ul>
   </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-sql-analysis" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">SQL Analysis</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-sql-analysis">    
+        <li>
+    <a class="dropdown-item" href="./trafficstops.html">
+ <span class="dropdown-text">Stanford Open Policing Project</span></a>
+  </li>  
+    </ul>
+  </li>
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
@@ -179,8 +224,20 @@ ul.task-list li input[type="checkbox"] {
 <p>This dataset comes from Carbon Majors, who have compiled a database of emissions data dating back to 1854. The dataset provides insights on the direct operational emissions of 122 of the world’s largest oil, gas, coal, and cement producers, with data such as entity type, commodity, production level, and total emissions attributed to that entity. I accessed it via the TidyTuesday repo from May 21, 2024.</p>
 <p>The dataset can be found here: <a href="https://carbonmajors.org/Downloads" class="uri">https://carbonmajors.org/Downloads</a></p>
 <p>The TidyTuesday repo can be found here: <a href="https://github.com/rfordatascience/tidytuesday/tree/main/data/2024/2024-05-21" class="uri">https://github.com/rfordatascience/tidytuesday/tree/main/data/2024/2024-05-21</a></p>
-<p>The following visualization shows the stark increase in the production of nearly every type of resource included in the dataset in recent years, except for thermal coal and natural gas. In addition, there is a clear major rise in oil, gas, coal, and cement production after around 1950, with production of most types increasing sharply until a little after 2000, at which point growth in production continues but at a lower rate.</p>
+<p>The following visualization shows the stark increase in the production of nearly every type of resource included in the dataset in recent years, except for thermal coal and natural gas. In addition, there is a clear major rise in oil, gas, coal, and cement production after 1950, with production of most types increasing sharply until a little after 2000, at which point growth in production continues but at a lower rate. The increase around 1950 could be due to the post-World War II industrial boom, and the slowing of natural gas and certain types of coal in the 21st century could be due to decarbonization efforts. Trends could be better explained by examining the uses for each of the types of coal.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>emissions <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"emissions.csv"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>emissions <span class="ot">&lt;-</span> <span class="fu">mutate</span>(emissions, production_value)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(emissions) <span class="sc">+</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x=</span> year, <span class="at">y =</span> production_value)) <span class="sc">+</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> commodity, <span class="at">scales =</span> <span class="st">"free_y"</span>) <span class="sc">+</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year"</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Production Level"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -189,6 +246,8 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 </div>
+<p><u>Citations</u></p>
+<p>InfluenceMap. <em>Carbon Majors Database</em> (2025 update). Retrieved 13 May 2025, from <a href="https://carbonmajors.org/Downloads" class="uri">https://carbonmajors.org/Downloads</a></p>
 
 
 

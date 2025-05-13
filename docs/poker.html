@@ -174,6 +174,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
     </ul>
   </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-sql-analysis" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">SQL Analysis</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-sql-analysis">    
+        <li>
+    <a class="dropdown-item" href="./trafficstops.html">
+ <span class="dropdown-text">Stanford Open Policing Project</span></a>
+  </li>  
+    </ul>
+  </li>
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
@@ -218,7 +229,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>I began by creating a function to simulate the movement of cards in a game of Texas hold ’em with n players (dealing to players, burning, dealing community cards).</p>
 <div class="cell">
 <details class="code-fold">
-<summary>Code</summary>
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tictoc)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>poker_game <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">n =</span> <span class="dv">4</span>){</span>
@@ -267,22 +278,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="co">#simulates my hand in a game of poker with four players</span></span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="fu">poker_game</span>(<span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>hand <span class="ot">&lt;-</span> <span class="fu">poker_game</span>(<span class="dv">4</span>)</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(hand)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 49 12 46 19 45 26  9</code></pre>
+<pre><code>[1] 32 52 43  7 14 49 41</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(hand<span class="sc">%%</span><span class="dv">13</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  6  0  4  7  1 10  2</code></pre>
 </div>
 </div>
-<p>The output above represents the hand dealt to the player. The deck is generated as a vector of integers from 1 to 52, and each “card’s” face value is determined by its number modulus 13. If we get four cards for which their representative number mod 13 are equal, then we have gotten four-of-a-kind.</p>
+<p>The output above represents the hand dealt to the player, along with the corresponding face value of each card. The deck is generated as a vector of integers from 1 to 52, and each card’s face value is determined by its number modulus 13. If we get four cards for which their representative number mod 13 are equal, then we have gotten four-of-a-kind.</p>
 <p>Next, I created a function to check if a hand has four-of-a-kind.</p>
 <div class="cell">
 <details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>four_of_a_kind <span class="ot">&lt;-</span> <span class="cf">function</span>(nada, <span class="at">hand =</span> <span class="fu">poker_game</span>(<span class="dv">4</span>)){</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  card_values <span class="ot">&lt;-</span> hand <span class="sc">%%</span> <span class="dv">13</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">any</span>(<span class="fu">table</span>(card_values) <span class="sc">==</span> <span class="dv">4</span>)</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">four_of_a_kind</span>(<span class="at">hand =</span> <span class="fu">poker_game</span>(<span class="dv">4</span>)) <span class="sc">|&gt;</span> <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>four_of_a_kind <span class="ot">&lt;-</span> <span class="cf">function</span>(nada, <span class="at">hand =</span> <span class="fu">poker_game</span>(<span class="dv">4</span>)){</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  card_values <span class="ot">&lt;-</span> hand <span class="sc">%%</span> <span class="dv">13</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">any</span>(<span class="fu">table</span>(card_values) <span class="sc">==</span> <span class="dv">4</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">four_of_a_kind</span>(<span class="at">hand =</span> <span class="fu">poker_game</span>(<span class="dv">4</span>)) <span class="sc">|&gt;</span> <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] FALSE</code></pre>
@@ -292,76 +311,76 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>The next step is to simulate many poker games to get an approximate probability of being dealt a four-of-a-kind.</p>
 <div class="cell">
 <details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">47</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">100000</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tic</span>()</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>odds_map <span class="ot">&lt;-</span> <span class="fu">map_lgl</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span>n), <span class="sc">~</span> <span class="fu">four_of_a_kind</span>(<span class="at">nada =</span> .x))</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">9</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">100000</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tic</span>()</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>odds_map <span class="ot">&lt;-</span> <span class="fu">map_lgl</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span>n), <span class="sc">~</span> <span class="fu">four_of_a_kind</span>(<span class="at">nada =</span> .x))</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>31.12 sec elapsed</code></pre>
+<pre><code>30.72 sec elapsed</code></pre>
 </div>
 <details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(odds_map)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(odds_map)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.00161</code></pre>
+<pre><code>[1] 0.00168</code></pre>
 </div>
 </div>
-<p>The above output is the estimated probability of being dealt a four-of-a-kind in a poker game with four players.</p>
-<p>After simulating 100,000 poker games, I found that, in a game with four players, the odds of being dealt a four-of-a-kind are about 0.168%, or about 1 in 600. Given I have played approximately ~60 hands of poker, it makes sense that I have yet to receive a four-of-a-kind.</p>
+<p>The above output is the estimated probability of being dealt a four-of-a-kind in a poker game with four players. I used a four-player game since these are the games that I play most often.</p>
+<p>After simulating 100,000 poker games, I found that, in a game with four players, the chances of being dealt a four-of-a-kind are about 0.168%, or 1 in 600. Given I have played approximately ~60 hands of poker, it makes sense that I have yet to receive a four-of-a-kind.</p>
 <p>Given the above findings, I wanted to know if I would be less likely to receive a four-of-a-kind in a game with more players, given that cards I need for a four-of-a-kind could be dealt to other players.</p>
 <p>To find out if this is the case, I ran the simulation over poker games with 2 through 8 players and plotted the findings below:</p>
 <div class="cell">
 <details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">47</span>)</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">100000</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tic</span>()</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">8</span>, <span class="cf">function</span>(x) {</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  prob <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">map_lgl</span>(<span class="dv">1</span><span class="sc">:</span>n, <span class="sc">~</span> <span class="fu">four_of_a_kind</span>(<span class="at">nada =</span> .x)))  <span class="co"># Probability estimation</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">players =</span> x, <span class="at">probability =</span> prob)</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">9</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">100000</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tic</span>()</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">8</span>, <span class="cf">function</span>(x) {</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  prob <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">map_lgl</span>(<span class="dv">1</span><span class="sc">:</span>n, <span class="sc">~</span> <span class="fu">four_of_a_kind</span>(<span class="at">nada =</span> .x)))  <span class="co"># Probability estimation</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">players =</span> x, <span class="at">probability =</span> prob)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>218.11 sec elapsed</code></pre>
+<pre><code>219.25 sec elapsed</code></pre>
 </div>
 <details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 7 × 2
   players probability
     &lt;int&gt;       &lt;dbl&gt;
-1       2     0.00161
-2       3     0.0018 
-3       4     0.0017 
-4       5     0.00156
-5       6     0.00144
-6       7     0.00176
-7       8     0.0017 </code></pre>
+1       2     0.00168
+2       3     0.0016 
+3       4     0.00163
+4       5     0.00181
+5       6     0.00159
+6       7     0.00135
+7       8     0.00182</code></pre>
 </div>
 </div>
-<p>The above table shows the probabilities of being dealt a four-of-a-kind in poker games with 2-8 players. There is no clear trend in the probabilities across multiple runs of the simulation. I would run a higher number of iterations (i.e.&nbsp;n = 1,000,000) to get more precise probabilities but the n = 100,000 values take 10 minutes to render.</p>
+<p>The above table shows the probabilities of being dealt a four-of-a-kind in poker games with 2-8 players. There is no clear trend in the probabilities across multiple runs of the simulation. Running a higher number of iterations (i.e.&nbsp;n = 1,000,000) would give more precise probabilities but take 10 times as long to render.</p>
 <div class="cell">
 <details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(results, <span class="fu">aes</span>(<span class="at">x =</span> players, <span class="at">y =</span> probability)) <span class="sc">+</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">"blue"</span>, <span class="at">size =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.002</span>)) <span class="sc">+</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Probability of Getting Four-of-a-Kind vs. Number of Players"</span>,</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Number of Players"</span>,</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Estimated Probability"</span>,</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Monte Carlo Simulation with n = 100,000 per player count"</span></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(results, <span class="fu">aes</span>(<span class="at">x =</span> players, <span class="at">y =</span> probability)) <span class="sc">+</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">"blue"</span>, <span class="at">size =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.002</span>)) <span class="sc">+</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Probability of Getting Four-of-a-Kind vs. Number of Players"</span>,</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Number of Players"</span>,</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Estimated Probability"</span>,</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Monte Carlo Simulation with n = 100,000 per player count"</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -371,8 +390,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p>In the above graph we see small variations in the probabilities for the different numbers of players. However, these variations are due to the (relatively) small sample size of 100,000 rounds, and re-running the simluation would give different numbers still distributed around 0.00168. With a larger sample size, we would expect to see less variation due to the law of large numbers.</p>
-<p>Interestingly, the number of players in a poker game does not affect one’s odds of being dealt a four-of-a-kind. I had hypothesized otherwise, since more players playing means there is a higher chance that someone is dealt a card you need for a four-of-a-kind, but this conclusion demonstrates that it doesn’t make a difference if a card is in a different player’s hand or still in the deck after all the cards are dealt (since 45 cards will always not appear in your hand). If I was interested in getting a four-of-a-kind as quickly as possible, I could act on these findings by playing as many hands as possible with only one other player, since the probability of getting a four-of-a-kind in any given round is constant and each round would play quicker than compared to a game with 3 or more players.</p>
+<p>In the above graph we see small variations in the probabilities for the different numbers of players. However, these variations are sampling noise inherent to the nature of a finite Monte-Carlo experiment, and re-running the simluation would give different numbers distributed around 0.00168. With a larger sample size, we would expect to see less variation due to the law of large numbers.</p>
+<p>Interestingly, the number of players in a poker game does not affect one’s probability of being dealt a four-of-a-kind. I had hypothesized otherwise, since more players playing means there is a higher chance that someone is dealt a card you need for a four-of-a-kind, but this conclusion demonstrates that it doesn’t make a difference if a card is in a different player’s hand or still in the deck after all the cards are dealt (since 45 cards will always not appear in your hand). If I was interested in getting a four-of-a-kind as quickly as possible, I could act on these findings by playing as many hands as possible with only one other player, since the probability of getting a four-of-a-kind in any given round is constant and each round would play quicker than compared to a game with 3 or more players.</p>
 
 
 

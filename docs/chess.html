@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -140,6 +174,17 @@ ul.task-list li input[type="checkbox"] {
   </li>  
     </ul>
   </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-sql-analysis" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">SQL Analysis</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-sql-analysis">    
+        <li>
+    <a class="dropdown-item" href="./trafficstops.html">
+ <span class="dropdown-text">Stanford Open Policing Project</span></a>
+  </li>  
+    </ul>
+  </li>
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
@@ -176,11 +221,23 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>This dataset comes from Lichess.org via Mitchell J on Kaggle, representing over 20,000 games of chess collected from users on Lichess.org. Data includes players’ ratings, openings played, and outcome of the game (among other data). I accessed it via the TidyTuesday repo from October 1, 2024.</p>
+<p>The following visualization uses a dataset posted by Mitchell J on Kaggle, with the following description:</p>
+<p>“This is a set of just over 20,000 games collected from a selection of users on the site Lichess.org, and how to collect more.”</p>
+<p>Data includes players’ ratings, openings played, and outcome of the game (among other data). I accessed it via the TidyTuesday repo from October 1, 2024.</p>
 <p>The dataset can be found here: <a href="https://www.kaggle.com/datasets/datasnaek/chess/data" class="uri">https://www.kaggle.com/datasets/datasnaek/chess/data</a></p>
 <p>The TidyTuesday repo can be found here: <a href="https://github.com/rfordatascience/tidytuesday/tree/main/data/2024/2024-10-01" class="uri">https://github.com/rfordatascience/tidytuesday/tree/main/data/2024/2024-10-01</a></p>
-<p>The following visualization shows the relationship between the number of turns a chess game takes and the difference between the two players’ ratings. A positive rating difference indicates that the player playing white had a higher rating than their opponent, and a negative rating difference indicates that the player playing black had a higher rating for that game. The visualization suggests that when there is a large difference between players’ ratings, fewer games with over 100 turns are played when compared to games where players’ have a small difference in ratings.</p>
+<p>The following visualization shows the relationship between the number of turns a chess game takes and the difference between the two players’ ratings. A positive rating difference indicates that the player playing white had a higher rating than their opponent, and a negative rating difference indicates that the player playing black had a higher rating for that game. The visualization suggests that when there is a large difference between players’ ratings, fewer games with over 100 turns are played when compared to games where players’ have a small difference in ratings. Intuitively, this makes sense. In a game in which both players have similar ratings, it is less likely that one player will outmaneuver the other and reach checkmate quickly than in a game in which one player is far better than the other.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>chess <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"chess.csv"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(chess, <span class="fu">aes</span>(<span class="at">x=</span> (<span class="at">diff =</span> white_rating<span class="sc">-</span>black_rating), <span class="at">y =</span> turns)) <span class="sc">+</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Rating Difference"</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Turns"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -189,6 +246,8 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 </div>
+<p><u>Citations</u></p>
+<p>datasnaek. <em>Chess Games Dataset (Lichess)</em>. Kaggle. Retrieved 13 May 2025, from <a href="https://www.kaggle.com/datasets/datasnaek/chess" class="uri">https://www.kaggle.com/datasets/datasnaek/chess</a></p>
 
 
 

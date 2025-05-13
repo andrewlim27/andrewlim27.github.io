@@ -13,4 +13,4 @@ about:
       href: mailto:aslr2024@mymail.pomona.edu
 ---
 
-Hello! I'm Andrew, a first-year at Pomona College. I study mathematics and computer science, and I love their applications such as data science. Outside of the classroom, I golf for the Pomona-Pitzer Men's Golf team. My hobbies include sudoku and anything outdoors (I especially love the mountains).
+Hello! I'm Andrew, a first-year at Pomona College. I study mathematics and computer science, and I am interested in learning more about data science. Outside of the classroom, I golf for the Pomona-Pitzer Men's Golf team, and I love doing sudoku and anything outdoors (I especially love the mountains).

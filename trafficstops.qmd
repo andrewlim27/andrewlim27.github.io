@@ -1,6 +1,7 @@
 ---
 title: "Traffic Stops"
 ---
+
 The following data analysis uses data compiled from the [Stanford Open Policing Project](https://openpolicing.stanford.edu/), which works to create "a comprehensive, national repository detailing interactions between police and the public." The database includes standardized data on traffic stops (vehiclular and pedestrian) from law enforcement departments from 42 states.
 
 One area of interest in the data is regarding vehicular searches. Approximately half of the datasets include data on whether or not a search was conducted. Vehicular searches are often prompted by suspicion of possession of illicit drugs. My analysis focuses on this question: Does the legalization of marijuana affect vehicle search rates?
@@ -28,44 +29,40 @@ con_traffic <- DBI::dbConnect(
 
 Of the states included in the dataset, three states (California, Colorado, Washington) have considerable data available from both before and after their legalization of marijuana. My analysis focuses on these three states, since data from before and after legalization makes the effect of legalization visible.
 
-
 ```{sql}
 #| connection: con_traffic
 #| output.var: "CO_table"
 SELECT COUNT(*) AS num_stops,
-  SUM(search_conducted) AS num_searched,
-  AVG(search_conducted)*100 AS percent_searched,
-  date >= "2012-12-10" AS after_legal
-FROM co_statewide_2020_04_01
+       SUM(search_conducted) AS num_searched,
+       AVG(search_conducted)*100 AS percent_searched,
+       date >= "2012-12-10" AS after_legal
+FROM   co_statewide_2020_04_01
+WHERE  date IS NOT NULL
 GROUP BY after_legal
-HAVING (after_legal IS NOT NULL)
 ```
-
 
 ```{sql}
 #| connection: con_traffic
 #| output.var: "WA_table"
 SELECT COUNT(*) AS num_stops,
-  SUM(search_conducted) AS num_searched,
-  AVG(search_conducted)*100 AS percent_searched,
-  date >= "2012-12-06" AS after_legal
-FROM wa_statewide_2020_04_01
+       SUM(search_conducted) AS num_searched,
+       AVG(search_conducted)*100 AS percent_searched,
+       date >= "2012-12-06" AS after_legal
+FROM   wa_statewide_2020_04_01
+WHERE  date IS NOT NULL
 GROUP BY after_legal
-HAVING (after_legal IS NOT NULL)
 ```
-
 
 ```{sql}
 #| connection: con_traffic
 #| output.var: "CA_table"
-SELECT
-    SUM(num_stops) AS num_stops,
-    SUM(num_searched) AS num_searched,
-    SUM(num_searched)*100/SUM(num_stops) AS percent_searched,
-    (date >= '2016-11-09') AS after_legal
-FROM (SELECT 1 AS num_stops,
-      date,
-      search_conducted AS num_searched
+SELECT SUM(num_stops) AS num_stops,
+       SUM(num_searched) AS num_searched,
+       SUM(num_searched)*100/SUM(num_stops) AS percent_searched,
+       (date >= '2016-11-09') AS after_legal
+FROM   (SELECT 1 AS num_stops,
+       date,
+       search_conducted AS num_searched
     FROM ca_san_diego_2020_04_01
     
     UNION ALL
@@ -90,20 +87,35 @@ FROM (SELECT 1 AS num_stops,
     FROM ca_stockton_2020_04_01
     
     ) AS cali_table
-GROUP BY after_legal
-HAVING (after_legal IS NOT NULL);
+WHERE date IS NOT NULL
+GROUP BY after_legal;
 ```
 
-The following tables summarize the results. The num_stops column indicates the number of traffic stops, the num_searched column indicates the number of stops in which a search was conudcted, and the percent_searched column indicates the percentage of stops in which a seach was conducted (the 0.4899 below indicates 0.4899%, not 48.99%). Lastly, the after_legal column indicates whether that row refers to traffic stops before or after the legalization of marijuana in that state.
+The following table summarizes the results. The num_stops column indicates the number of traffic stops, the num_searched column indicates the number of stops in which a search was conudcted, and the percent_searched column indicates the percentage of stops in which a seach was conducted (the 0.4899 below indicates 0.4899%, not 48.99%). Lastly, the after_legal column indicates whether that row refers to traffic stops before or after the legalization of marijuana in that state (given by the state column).
 
 ```{r}
-CO_table <- CO_table |> mutate(after_legal = factor(after_legal, levels = c(0, 1), labels = c("Before", "After")))
-WA_table <- WA_table |> mutate(after_legal = factor(after_legal, levels = c(0, 1), labels = c("Before", "After")))
-CA_table <- CA_table |> mutate(after_legal = factor(after_legal, levels = c(0, 1), labels = c("Before", "After")))
+CO_table <- CO_table |>
+  mutate(after_legal = factor(after_legal,
+                              levels = c(0, 1),
+                              labels = c("Before", "After"))) |>
+  mutate(num_stops = as.integer(num_stops))
 
-print(CO_table)
-print(WA_table)
-print(CA_table)
+WA_table <- WA_table |>
+  mutate(after_legal = factor(after_legal,
+                              levels = c(0, 1),
+                              labels = c("Before", "After"))) |>
+  mutate(num_stops = as.integer(num_stops))
+
+CA_table <- CA_table |>
+  mutate(after_legal = factor(after_legal,
+                              levels = c(0, 1),
+                              labels = c("Before", "After"))) |>
+  mutate(num_stops = as.integer(num_stops))
+
+tri_table <- bind_rows(mutate(CO_table, state = "CO"),
+                       mutate(WA_table, state = "WA"),
+                       mutate(CA_table, state = "CA"))
+print(tri_table)
 ```
 
 The below graphs show the impact of the legalization of marijuana on vehicular search rates. We can see that Colorado and Washington saw nearly 50% decreases in search rates after legalization of marijuana. However, California saw a 50% increase in vehicular searches.
@@ -145,7 +157,12 @@ ggplot(CA_table,
   theme_minimal(base_size = 13) +
   theme(legend.position = "top")
 
-total_table <- CO_table |> mutate(state = "CO") |> rbind(mutate(WA_table, state = "WA")) |> rbind(mutate(CA_table, state = "CA")) |> group_by(after_legal) |> summarize(percent_searched = sum(num_searched)/sum(num_stops))
+total_table <- CO_table |>
+  mutate(state = "CO") |>
+  rbind(mutate(WA_table, state = "WA")) |>
+  rbind(mutate(CA_table, state = "CA")) |>
+  group_by(after_legal) |>
+  summarize(percent_searched = sum(num_searched)/sum(num_stops))
 
 ggplot(total_table,
        aes(x = after_legal,
@@ -160,13 +177,120 @@ ggplot(total_table,
   theme(legend.position = "top")
 ```
 
+The data from Colorado and Washington were taken from state patrol on highways, while the data from California was complied from police departments within cities, which could help explain the discrepancy in the number of traffic stops recorded in CA vs. WA and CO. (CA state patrol data exists in the database, but only covers the pre-legalization period). The Washington and Colorado traffic stops outnumbered the California stops to such a degree that there is an overall decrease in search rates after legalization, despite California's large percentage increase in search rates.
 
-The data from Colorado and Washington were taken from state patrol on highways, while the data from California was complied from police departments within cities, which could help explain the discrepancy in the number of traffic stops recorded in CA vs. WA and CO. The Washington and Colorado traffic stops outnumbered the California stops to such a degree that there is an overall decrease in search rates after legalization, despite California's large percentage increase in search rates.
+The following graphs show the impact of legalization of marijuana on search rates with greater granularity. Each point represents the search rate in a given month, and the line indicates the time at which marijuana was legalized.
+
+```{sql}
+#| connection: con_traffic
+#| output.var: "grouped_CO_table"
+
+SELECT COUNT(*) AS num_stops,
+       SUM(search_conducted) AS num_searched,
+       AVG(search_conducted)*100 AS percent_searched,
+       DATE_FORMAT(date, '%Y-%m-01') AS group_month
+FROM   co_statewide_2020_04_01
+WHERE  date IS NOT NULL
+GROUP BY group_month
+```
+
+```{sql}
+#| connection: con_traffic
+#| output.var: "grouped_WA_table"
+
+SELECT COUNT(*) AS num_stops,
+       SUM(search_conducted) AS num_searched,
+       AVG(search_conducted)*100 AS percent_searched,
+       DATE_FORMAT(date, '%Y-%m-01') AS group_month
+FROM   wa_statewide_2020_04_01
+WHERE  date IS NOT NULL
+GROUP BY group_month
+```
+
+```{sql}
+#| connection: con_traffic
+#| output.var: "grouped_CA_table"
+SELECT SUM(num_stops) AS num_stops,
+       SUM(num_searched) AS num_searched,
+       SUM(num_searched)*100/SUM(num_stops) AS percent_searched,
+       DATE_FORMAT(date, '%Y-%m-01') AS group_month
+FROM   (SELECT 1 AS num_stops,
+       date,
+       search_conducted AS num_searched
+    FROM ca_san_diego_2020_04_01
+    
+    UNION ALL
+
+    SELECT 1,
+      date,
+      search_conducted
+    FROM ca_oakland_2020_04_01
+    
+    UNION ALL
+    
+    SELECT 1,
+      date,
+      search_conducted
+    FROM ca_san_jose_2020_04_01
+    
+    UNION ALL
+    
+    SELECT 1,
+      date,
+      search_conducted
+    FROM ca_stockton_2020_04_01
+    
+    ) AS cali_table
+WHERE date IS NOT NULL
+GROUP BY group_month;
+```
+
+```{r warning = FALSE}
+ggplot(grouped_CO_table,
+       aes(x = as.Date(group_month), y = percent_searched)) +
+  geom_point() +
+  geom_vline(xintercept = as.Date("2012-12-01"), color = "red") +
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
+  labs(title   = "Average Monthly Search Rates Over Time in Colorado",
+       subtitle = "Red Bar Represents Legalization of Marijuana",
+       x = "",
+       y = "% of Stops that Led to a Search")
+```
+
+The Colorado graph shows a clear decline in search rates after the legalization of marijuana, in line with my expectations. Interestingly, there was an increase in search rates in 2017, which offers another point for examination in the future.
+
+```{r warning = FALSE}
+ggplot(grouped_WA_table,
+       aes(x = as.Date(group_month), y = percent_searched)) +
+  geom_point() +
+  geom_vline(xintercept = as.Date("2012-12-01"), color = "red") +
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
+  labs(title   = "Average Monthly Search Rates Over Time in Washington",
+       subtitle = "Red Bar Represents Legalization of Marijuana",
+       x = "",
+       y = "% of Stops that Led to a Search")
+```
+
+The Washington graph shows similar decreases in search rates after the legalization of marijuana. However, it appears that this could have been part of a larger trend of decreasing search rates since search rates appeared to be already decreasing before the legalization of marijuana.
+
+```{r warning = FALSE}
+ggplot(grouped_CA_table,
+       aes(x = as.Date(group_month), y = percent_searched)) +
+  geom_point() +
+  geom_vline(xintercept = as.Date("2016-11-01"), color = "red") +
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
+  labs(title   = "Average Monthly Search Rates Over Time in California",
+       subtitle = "Red Bar Represents Legalization of Marijuana",
+       x = "",
+       y = "% of Stops that Led to a Search")
+```
+
+My California analysis combined data from three different Californian cities (since they all had data from before and after the legalization period). However, after viewing the above graph, it seems that the analysis would benefit from a deeper examination of the California data, as the starkly different rate trends over time could be explained by differing police departments.
 
 Overall, it is difficult to determine from the data if marijuana legalization led to decreased search rates, although search rates did decrease significantly in Washington and Colorado. The California analysis would benefit from statewide data that would make it more comparable to the Washington and Colorado data, as opposed to the city-specific data (and relatively low number of obersvations) available for California.
 
 One limitation of this analysis is that it doesn't recognize the possible changes in searches due to other reasons, such as falling crime or changes in policing practices. In addition, since data is limited to only certain cities in California, while Colorado and Washington use state patrol data, different policing practices among these groups could create greater discrepancies. Further areas for exploration would be to compare the above results to states which have not legalized recreational marijuana to isolate the impact of policy on traffic searches, along with how search rates vary across groups by race.
 
-References:
+[Citations]{.underline}
 
 Pierson, Emma, Camelia Simoiu, Jan Overgoor, Sam Corbett-Davies, Daniel Jenson, Amy Shoemaker, Vignesh Ramachandran, et al. 2020. “A Large-Scale Analysis of Racial Disparities in Police Stops Across the United States.” *Nature Human Behaviour*, 1–10.

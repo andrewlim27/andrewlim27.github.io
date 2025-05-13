@@ -140,6 +140,17 @@ ul.task-list li input[type="checkbox"] {
   </li>  
     </ul>
   </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-sql-analysis" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">SQL Analysis</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-sql-analysis">    
+        <li>
+    <a class="dropdown-item" href="./trafficstops.html">
+ <span class="dropdown-text">Stanford Open Policing Project</span></a>
+  </li>  
+    </ul>
+  </li>
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
@@ -151,11 +162,20 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#what-is-the-permission-consent-structure-for-using-the-data-was-if-followed" id="toc-what-is-the-permission-consent-structure-for-using-the-data-was-if-followed" class="nav-link active" data-scroll-target="#what-is-the-permission-consent-structure-for-using-the-data-was-if-followed">What is the permission / consent structure for using the data? Was if followed?</a></li>
+  <li><a href="#is-the-data-identifiable-and-sufficiently-anonymized" id="toc-is-the-data-identifiable-and-sufficiently-anonymized" class="nav-link" data-scroll-target="#is-the-data-identifiable-and-sufficiently-anonymized">Is the data identifiable and sufficiently anonymized?</a></li>
+  <li><a href="#what-was-the-data-collection-process-and-was-it-ethical" id="toc-what-was-the-data-collection-process-and-was-it-ethical" class="nav-link" data-scroll-target="#what-was-the-data-collection-process-and-was-it-ethical">What was the data-collection process, and was it ethical?</a></li>
+  <li><a href="#were-the-data-made-publicly-available-and-are-they-being-used-in-unintended-ways" id="toc-were-the-data-made-publicly-available-and-are-they-being-used-in-unintended-ways" class="nav-link" data-scroll-target="#were-the-data-made-publicly-available-and-are-they-being-used-in-unintended-ways">Were the data made publicly available, and are they being used in unintended ways?</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content column-page" id="quarto-document-content">
+<main class="content column-page-left" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
@@ -164,7 +184,7 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<div class="quarto-title-meta column-page">
+<div class="quarto-title-meta column-page-left">
 
     
   
@@ -178,17 +198,25 @@ ul.task-list li input[type="checkbox"] {
 
 <p><strong>Ethics Discussion</strong></p>
 <p>In 2015, researchers published an dataset scraped from 60,000 OkCupid dating profiles. The following discussion explores the questions of ethics surrounding this incident.</p>
-<p>The dataset was indeed for use in introductory data science classes, from which students could use to practice anonymization or discuss data science ethics (Xiao 2021). While the researchers may have had productive intentions, the publication of the dataset was of questionable ethicality. Although the researchers tried to anonymize the data, they collected many important identifiers that could be used to identify users. Additionally, the collection of data was against OkCupid’s policies, and users were unaware that their data could be used and published in such a way.</p>
+<p>The dataset was intended for use in introductory data science classes, from which students could use to practice anonymization or discuss data science ethics (Xiao 2021). While the researchers may have had productive intentions, the publication of the dataset was of questionable ethicality. Although the researchers tried to anonymize the data, they collected many important identifiers that could be used to identify users. Additionally, the collection of data was against OkCupid’s terms of service, and users were unaware that their data could be used and published in such a way.</p>
 <p>A similar incident occured in 2016 when Dutch researchers published a dataset scraped from 70,000 OkCupid profiles (Resnick 2016). The Dutch researchers made no attempt to anonymize the data, given all the information was already “public” since it was available online. However, others argue that publishing the information was unethical since the information is not entirely public in that it is intended only for other OkCupid users and the gathering of data was done without OkCupid’s permission. Another ethical questions arising from this situation is regarding academia. The Dutch researchers were able to publish this data through the Open Science Framework, a platform intended to increase transparency and decrease gatekeeping in academia. However, the potential for harm like in this case raises questions regarding whether we should decrease barriers in academia, or if they serve a valid, useful purpose.</p>
 <p>Below I evaluate the processes used and identify the shortcomings of the OkCupid cases.</p>
-<p><u>What is the permission / consent structure for using the data? Was it followed?</u></p>
+<section id="what-is-the-permission-consent-structure-for-using-the-data-was-if-followed" class="level3">
+<h3 class="anchored" data-anchor-id="what-is-the-permission-consent-structure-for-using-the-data-was-if-followed">What is the permission / consent structure for using the data? Was if followed?</h3>
 <p>Consent is a freely given, informed, specific, and revocable agreement from a data subject that their information may be collected, analyzed, or shared for clearly stated purposes. Consent is important because it respects the autonomy and dignity of people and their information. No direct permission was received from OkCupid or from its users. The profiles were scraped from the website without any authorization. In addition, users could not have anticipated that their data would be published for use in an academic setting. This was a violation of the users’ autonomy and dignity in that it publicly exposed their personal information without their permission.</p>
-<p><u>Is the data identifiable and sufficiently anonymized?</u></p>
+</section>
+<section id="is-the-data-identifiable-and-sufficiently-anonymized" class="level3">
+<h3 class="anchored" data-anchor-id="is-the-data-identifiable-and-sufficiently-anonymized">Is the data identifiable and sufficiently anonymized?</h3>
 <p>Identifiability is the ability to identify the source of data given the data points. Sufficiently anonymized data makes it so that people can not identify the exact entity from which the data came from. In cases where the data is regarding people, identifiability makes it so one can identify an individual based on their recorded characteristics, while anonymized data works to prevent this. In the OkCupid cases, the data was identifiable and not sufficiently anonymized, meaning that that one could identify certain individuals based on their reported characteristics, such as age, location, among other factors. The identifiability of the data violated users’ privacy since anyone interested could extract personal information about certain individuals from the dataset.</p>
-<p><u>What was the data‑collection process, and was it ethical?</u></p>
+</section>
+<section id="what-was-the-data-collection-process-and-was-it-ethical" class="level3">
+<h3 class="anchored" data-anchor-id="what-was-the-data-collection-process-and-was-it-ethical">What was the data-collection process, and was it ethical?</h3>
 <p>An ethical data-collection process should have protections for participants, ensure security of data, and result in anonymized data. The OkCupid data was collected via web‑scraping without platform approval, and arguably violated the Computer Fraud and Abuse Act. It was not ethical since it was done without permission from any of the involved parties. The argument used by the Dutch researchers (that the information was already public) does not hold since the information was only partially public (only available for a target demographic to see). An ethical data-collection process would have required the permission of all users involved and the platform to ensure that only people who are okay with their information being published are included.</p>
-<p><u>Were the data made publicly available, and are they being used in unintended ways?</u></p>
-<p>Ideally, sensitive sensitive is shared only through a secure, access‑controlled repository under a license that restricts use to the specific, consented‑to purposes. The OkCupid data was made publicly available on the open web. Users’ personal essays, interests, and other identifying traits were freely downloadable. The release online meant that the data could be used for anything and everything beyond its intended classroom use. This constituted an ethical breach because it violates users’ peronal agency over their information (even if they consented to the study). The published information could be used for things like identifying people based on political beliefs or sexuality. A possible solution could be a gated-access model, in which access to the data could be regulated and controlled (Xiao 2021).</p>
+</section>
+<section id="were-the-data-made-publicly-available-and-are-they-being-used-in-unintended-ways" class="level3">
+<h3 class="anchored" data-anchor-id="were-the-data-made-publicly-available-and-are-they-being-used-in-unintended-ways">Were the data made publicly available, and are they being used in unintended ways?</h3>
+<p>Ideally, sensitive data is shared only through a secure, access‑controlled repository under a license that restricts use to the specific, consented‑to purposes. The OkCupid data was made publicly available on the open web. Users’ personal essays, interests, and other identifying traits were freely downloadable. The release online meant that the data could be used for anything and everything beyond its intended classroom use. This constituted an ethical breach because it violates users’ peronal agency over their information (even if they consented to the study). The published information could be used for things like identifying people based on political beliefs or sexuality. A possible solution could be a gated-access model, in which access to the data could be regulated and controlled (Xiao 2021).</p>
+<p>Interestingly enough, despite the backlash regarding the data’s publication, it is still available online, taking only 2 minute Google search to find.</p>
 <p><u>Citations</u></p>
 <ul>
 <li><p>OK Cupid data release (privacy and publicly available data). Xiao, T., and Ma, Y. (2021), <a href="https://www.tandfonline.com/doi/full/10.1080/26939169.2021.1930812">A Letter to the Journal of Statistics and Data Science Education — A Call for Review of ‘OkCupid Data for Introductory Statistics and Data Science Courses’ by Albert Y. Kim and Adriana Escobedo-Land</a>, Journal of Statistics and Data Science Education, 29, 214–215.</p></li>
@@ -196,6 +224,7 @@ ul.task-list li input[type="checkbox"] {
 </ul>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

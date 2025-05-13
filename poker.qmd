@@ -1,6 +1,5 @@
 ---
 title: "Poker Simulation"
-code-fold: true
 ---
 
 As an avid golfer, I have bore witness to 4 holes-in-one and have been gifted with 3 of my own. As an inexperienced poker player, however, I have yet to receive witness anyone receiving a four-of-a-kind. Given its seemingly elusive nature, I was interested in finding out the probability of being dealt a four-of-a-kind, and if/how the probability changes based on the number of players playing.
@@ -64,10 +63,12 @@ poker_game <- function(n = 4){
 }
 
 #simulates my hand in a game of poker with four players
-poker_game(4)
+hand <- poker_game(4)
+print(hand)
+print(hand%%13)
 ```
 
-The output above represents the hand dealt to the player. The deck is generated as a vector of integers from 1 to 52, and each "card's" face value is determined by its number modulus 13. If we get four cards for which their representative number mod 13 are equal, then we have gotten four-of-a-kind.
+The output above represents the hand dealt to the player, along with the corresponding face value of each card. The deck is generated as a vector of integers from 1 to 52, and each card's face value is determined by its number modulus 13. If we get four cards for which their representative number mod 13 are equal, then we have gotten four-of-a-kind.
 
 Next, I created a function to check if a hand has four-of-a-kind.
 
@@ -84,7 +85,7 @@ The output above indicates whether the hand inputted into the function contains 
 The next step is to simulate many poker games to get an approximate probability of being dealt a four-of-a-kind.
 
 ```{r}
-set.seed(47)
+set.seed(9)
 n <- 100000
 
 tic()
@@ -94,16 +95,16 @@ toc()
 mean(odds_map)
 ```
 
-The above output is the estimated probability of being dealt a four-of-a-kind in a poker game with four players.
+The above output is the estimated probability of being dealt a four-of-a-kind in a poker game with four players. I used a four-player game since these are the games that I play most often.
 
-After simulating 100,000 poker games, I found that, in a game with four players, the odds of being dealt a four-of-a-kind are about 0.168%, or about 1 in 600. Given I have played approximately \~60 hands of poker, it makes sense that I have yet to receive a four-of-a-kind.
+After simulating 100,000 poker games, I found that, in a game with four players, the chances of being dealt a four-of-a-kind are about 0.168%, or 1 in 600. Given I have played approximately \~60 hands of poker, it makes sense that I have yet to receive a four-of-a-kind.
 
 Given the above findings, I wanted to know if I would be less likely to receive a four-of-a-kind in a game with more players, given that cards I need for a four-of-a-kind could be dealt to other players.
 
 To find out if this is the case, I ran the simulation over poker games with 2 through 8 players and plotted the findings below:
 
 ```{r}
-set.seed(47)
+set.seed(9)
 n <- 100000
 tic()
 results <- map_dfr(2:8, function(x) {
@@ -115,7 +116,7 @@ print(results)
 
 ```
 
-The above table shows the probabilities of being dealt a four-of-a-kind in poker games with 2-8 players. There is no clear trend in the probabilities across multiple runs of the simulation. I would run a higher number of iterations (i.e. n = 1,000,000) to get more precise probabilities but the n = 100,000 values take 10 minutes to render.
+The above table shows the probabilities of being dealt a four-of-a-kind in poker games with 2-8 players. There is no clear trend in the probabilities across multiple runs of the simulation. Running a higher number of iterations (i.e. n = 1,000,000) would give more precise probabilities but take 10 times as long to render.
 
 ```{r, warning = FALSE}
 
@@ -132,6 +133,6 @@ ggplot(results, aes(x = players, y = probability)) +
   theme_minimal()
 ```
 
-In the above graph we see small variations in the probabilities for the different numbers of players. However, these variations are due to the (relatively) small sample size of 100,000 rounds, and re-running the simluation would give different numbers still distributed around 0.00168. With a larger sample size, we would expect to see less variation due to the law of large numbers.
+In the above graph we see small variations in the probabilities for the different numbers of players. However, these variations are sampling noise inherent to the nature of a finite Monte-Carlo experiment, and re-running the simluation would give different numbers distributed around 0.00168. With a larger sample size, we would expect to see less variation due to the law of large numbers.
 
-Interestingly, the number of players in a poker game does not affect one's odds of being dealt a four-of-a-kind. I had hypothesized otherwise, since more players playing means there is a higher chance that someone is dealt a card you need for a four-of-a-kind, but this conclusion demonstrates that it doesn't make a difference if a card is in a different player's hand or still in the deck after all the cards are dealt (since 45 cards will always not appear in your hand). If I was interested in getting a four-of-a-kind as quickly as possible, I could act on these findings by playing as many hands as possible with only one other player, since the probability of getting a four-of-a-kind in any given round is constant and each round would play quicker than compared to a game with 3 or more players.
+Interestingly, the number of players in a poker game does not affect one's probability of being dealt a four-of-a-kind. I had hypothesized otherwise, since more players playing means there is a higher chance that someone is dealt a card you need for a four-of-a-kind, but this conclusion demonstrates that it doesn't make a difference if a card is in a different player's hand or still in the deck after all the cards are dealt (since 45 cards will always not appear in your hand). If I was interested in getting a four-of-a-kind as quickly as possible, I could act on these findings by playing as many hands as possible with only one other player, since the probability of getting a four-of-a-kind in any given round is constant and each round would play quicker than compared to a game with 3 or more players.
