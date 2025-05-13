@@ -32,6 +32,8 @@ website:
         menu:
          - text: "Stanford Open Policing Project"
            href: trafficstops.html
+         - text: "Stanford Open Policing Project Presentation"
+           href: sopppresentation.html
 
 format:
   html:
